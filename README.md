@@ -6,5 +6,3 @@ They are not just lists of students and courses, but living organizations made u
 
 Our goal is to build a **flexible, instance-based campus platform** that can model this reality without forcing every institution into the same rigid structure.
 
-The project lives in a single GitHub repository, but it is intentionally split into two independent parts:
-
