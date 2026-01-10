@@ -24,8 +24,8 @@ class AcademicYear extends Model
      * Defines the relationship between an academic year and its semesters.
      * A single academic year consists of multiple semesters.
      */
-    // public function semesters()
-    // {
-    //     return $this->hasMany(Semester::class);
-    // }
+    public function semesters()
+    {
+        return $this->hasMany(Semester::class);
+    }
 }

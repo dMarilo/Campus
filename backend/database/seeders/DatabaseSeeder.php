@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             DormSeeder::class,
             RoomSeeder::class,
             AcademicYearSeeder::class,
+            SemesterSeeder::class,
         ]);
     }
 }
