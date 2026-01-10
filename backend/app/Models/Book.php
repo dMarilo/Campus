@@ -28,13 +28,60 @@ class Book extends Model
 
     /*
     |--------------------------------------------------------------------------
-    | Casts
+    | Relationships
     |--------------------------------------------------------------------------
     */
 
-    protected $casts = [
-        'published_year'   => 'integer',
-        'total_copies'     => 'integer',
-        'available_copies' => 'integer',
-    ];
+    public function copies()
+    {
+        return $this->hasMany(BookCopy::class);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Domain Methods
+    |--------------------------------------------------------------------------
+    */
+
+    public function getAllBooks()
+    {
+        return self::query()->get();
+    }
+
+    public function getBookById(int $id): Book
+    {
+        return self::query()->findOrFail($id);
+    }
+
+    public function search(string $query)
+    {
+        $keywords = preg_split('/\s+/', trim($query));
+
+        return self::query()
+            ->where(function ($q) use ($keywords) {
+                foreach ($keywords as $word) {
+                    $q->where('title', 'LIKE', "%{$word}%");
+                }
+            })
+            ->get();
+    }
+
+    public function createBook(array $data): Book
+    {
+        return self::create($data);
+    }
+
+    public function updateBook(int $id, array $data): Book
+    {
+        $book = $this->getBookById($id);
+        $book->update($data);
+
+        return $book;
+    }
+
+    public function deleteBook(int $id): bool
+    {
+        $book = $this->getBookById($id);
+        return (bool) $book->delete();
+    }
 }
