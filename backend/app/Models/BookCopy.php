@@ -9,6 +9,17 @@ class BookCopy extends Model
 {
     use HasFactory;
 
+    /*
+    |--------------------------------------------------------------------------
+    | Constants
+    |--------------------------------------------------------------------------
+    */
+
+    public const STATUS_AVAILABLE = 'available';
+    public const STATUS_BORROWED  = 'borrowed';
+    public const STATUS_DAMAGED   = 'damaged';
+
+
     protected $fillable = [
         'book_id',
         'isbn',
