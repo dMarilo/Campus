@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('author');
 
             // Optional metadata
-            $table->string('isbn')->nullable()->index();
             $table->string('publisher')->nullable();
             $table->integer('published_year')->nullable();
             $table->string('edition')->nullable();
