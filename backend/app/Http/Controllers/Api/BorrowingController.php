@@ -9,6 +9,21 @@ use Illuminate\Http\Response;
 
 class BorrowingController extends Controller
 {
+    /**
+     * Handles the borrowing of a book copy by a student.
+     *
+     * This endpoint:
+     *  - Validates the student and book copy identifiers
+     *  - Delegates borrowing logic to the Borrowing domain model
+     *  - Creates a borrowing record and sets its status to borrowed
+     *  - Updates the book copy status and book availability count
+     *
+     * If borrowing rules are violated (e.g. copy not available),
+     * an error response is returned.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function borrow(Request $request)
     {
         $validated = $request->validate([
@@ -34,6 +49,19 @@ class BorrowingController extends Controller
         }
     }
 
+    /**
+     * Handles the return of a previously borrowed book copy.
+     *
+     * This endpoint:
+     *  - Validates the student and book copy identifiers
+     *  - Finds the active borrowing record
+     *  - Marks the borrowing as returned
+     *  - Updates the book copy status back to available
+     *  - Restores the available copies count of the related book
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function return(Request $request)
     {
         $validated = $request->validate([
@@ -59,6 +87,18 @@ class BorrowingController extends Controller
         }
     }
 
+    /**
+     * Retrieves borrowing information for a specific student.
+     *
+     * Depending on the provided type parameter, this endpoint returns:
+     *  - The complete borrowing history of the student
+     *  - Or only currently active (not yet returned) borrowings
+     *
+     * Results are ordered by borrowing date, newest first.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function studentBorrowings(Request $request)
     {
         $validated = $request->validate([
@@ -79,6 +119,15 @@ class BorrowingController extends Controller
         ]);
     }
 
+    /**
+     * Retrieves all currently active borrowings in the system.
+     *
+     * This endpoint is intended for administrative or librarian use.
+     * It returns all borrowings that have not yet been returned,
+     * including associated student and book information.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function allBorrowed()
     {
         $borrowings = (new Borrowing)->allActive();

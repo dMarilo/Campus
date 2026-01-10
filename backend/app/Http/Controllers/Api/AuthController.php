@@ -9,6 +9,21 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {
+    /**
+     * Authenticates a user and issues a JWT token.
+     *
+     * This endpoint:
+     *  - Validates the provided email and password credentials
+     *  - Attempts authentication using the JWT guard
+     *  - Returns a JWT token if authentication is successful
+     *  - Returns an unauthorized response if credentials are invalid
+     *
+     * The returned token must be used in the Authorization header
+     * for all subsequent authenticated API requests.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function login(Request $request)
     {
         $credentials = $request->validate([
