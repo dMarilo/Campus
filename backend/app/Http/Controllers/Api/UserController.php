@@ -12,6 +12,24 @@ use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
+    /**
+     * Creates a new user and an associated profile.
+     *
+     * This endpoint:
+     *  - Validates user credentials and profile information
+     *  - Creates a new user record in the users table
+     *  - Automatically creates a corresponding profile
+     *    based on the selected user type (student or professor)
+     *  - Ensures both user and profile creation occur atomically
+     *    within a database transaction
+     *
+     * The created user is immediately set to an active status.
+     * Profile records are initialized with minimal required data
+     * and can be completed later.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function store(Request $request)
     {
         $validated = $request->validate([
