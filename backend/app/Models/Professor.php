@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Student extends Model
+class Professor extends Model
 {
     use HasFactory;
 
@@ -15,9 +15,12 @@ class Student extends Model
     |--------------------------------------------------------------------------
     */
 
-    public const STATUS_ACTIVE    = 'active';
-    public const STATUS_GRADUATED = 'graduated';
-    public const STATUS_SUSPENDED = 'suspended';
+    public const STATUS_ACTIVE   = 'active';
+    public const STATUS_INACTIVE = 'inactive';
+
+    public const EMPLOYMENT_FULL_TIME = 'full_time';
+    public const EMPLOYMENT_PART_TIME = 'part_time';
+    public const EMPLOYMENT_EXTERNAL  = 'external';
 
     /*
     |--------------------------------------------------------------------------
@@ -27,29 +30,17 @@ class Student extends Model
 
     protected $fillable = [
         'user_id',
-        'email',
+        'code',
         'first_name',
         'last_name',
+        'email',
         'phone',
-        'date_of_birth',
-        'gender',
-        'student_index',
-        'code',
-        'year_of_study',
+        'academic_title',
         'department',
-        'gpa',
+        'employment_type',
         'status',
-    ];
-
-    /*
-    |--------------------------------------------------------------------------
-    | Casts
-    |--------------------------------------------------------------------------
-    */
-
-    protected $casts = [
-        'date_of_birth' => 'date',
-        'gpa' => 'decimal:2',
+        'office_location',
+        'office_hours',
     ];
 
     /*
@@ -78,5 +69,4 @@ class Student extends Model
     {
         return "{$this->first_name} {$this->last_name}";
     }
-
 }
