@@ -11,34 +11,31 @@ return new class extends Migration
         Schema::create('professors', function (Blueprint $table) {
             $table->id();
 
-            // Relation to users
+            // Relation
             $table->foreignId('user_id')
                 ->constrained()
                 ->cascadeOnDelete();
 
-            // Identity
-            $table->string('code')->index(); // renamed from isbn
+            // Identity (required on creation)
+            $table->string('email')->index();
             $table->string('first_name');
             $table->string('last_name');
-            $table->string('email')->index();
 
-            // Contact
+            // Optional profile data
+            $table->string('code')->nullable()->index();
             $table->string('phone')->nullable();
 
-            // Academic info
-            $table->string('academic_title');
-            $table->string('department');
+            $table->string('academic_title')->nullable();
+            $table->string('department')->nullable();
 
             $table->enum('employment_type', [
                 'full_time',
                 'part_time',
                 'external',
-            ]);
+            ])->nullable();
 
-            // Status
             $table->string('status')->default('active');
 
-            // Office
             $table->string('office_location')->nullable();
             $table->string('office_hours')->nullable();
 
