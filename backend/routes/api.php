@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\LibraryController;
 use App\Http\Controllers\Api\BorrowingController;
+use App\Http\Controllers\Api\DormController;
 
 /*
 |--------------------------------------------------------------------------
@@ -69,5 +70,19 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/student', [BorrowingController::class, 'studentBorrowings']);
         Route::get('/active', [BorrowingController::class, 'allBorrowed']);
     });
+
+    Route::prefix('dorms')->group(function () {
+        Route::get('/',               [DormController::class, 'getAllDorms']);
+        Route::get('/search',        [DormController::class, 'searchDorms']);
+        Route::get('/capacity/{id}', [DormController::class, 'getDormCapacity']);
+        Route::get('/rooms/{id}',    [DormController::class, 'getDormRoomCount']);
+        Route::get('/{id}',          [DormController::class, 'getDormById']);
+
+        Route::post('/load',         [DormController::class, 'loadDorm']);
+        Route::put('/update/{id}',   [DormController::class, 'updateDorm']);
+        Route::delete('/delete/{id}', [DormController::class, 'deleteDorm']);
+    });
+
+
 
 });
