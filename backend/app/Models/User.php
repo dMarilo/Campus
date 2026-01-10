@@ -35,7 +35,6 @@ class User extends Authenticatable
     */
 
     protected $fillable = [
-        'name',
         'email',
         'password',
         'type',
@@ -44,7 +43,7 @@ class User extends Authenticatable
 
     /*
     |--------------------------------------------------------------------------
-    | Hidden attributes
+    | Hidden
     |--------------------------------------------------------------------------
     */
 
@@ -69,7 +68,7 @@ class User extends Authenticatable
 
     /*
     |--------------------------------------------------------------------------
-    | Helpers (optional but very useful)
+    | Helpers
     |--------------------------------------------------------------------------
     */
 
