@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             BookSeeder::class,
             BookCopySeeder::class,
             DormSeeder::class,
+            RoomSeeder::class,
         ]);
     }
 }
