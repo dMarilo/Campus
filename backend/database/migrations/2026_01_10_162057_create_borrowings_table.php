@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
 
             $table->foreignId('book_copy_id')
-                ->constrained('book_copies')
+                ->constrained()
                 ->cascadeOnDelete();
 
             $table->foreignId('student_id')
@@ -22,6 +22,8 @@ return new class extends Migration
             $table->dateTime('borrowed_at');
             $table->dateTime('due_at');
             $table->dateTime('returned_at')->nullable();
+
+            $table->string('status')->index();
 
             $table->timestamps();
         });
