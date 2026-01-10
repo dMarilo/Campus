@@ -18,10 +18,9 @@ class User extends Authenticatable
     */
 
     // User types
-    public const TYPE_SYSTEM = 'system';
     public const TYPE_ADMIN  = 'admin';
-    public const TYPE_STAFF  = 'staff';
-    public const TYPE_CLIENT = 'client';
+    public const TYPE_PROFESSOR = 'professor';
+    public const TYPE_STUDENT = 'student';
 
     // User statuses
     public const STATUS_ACTIVE   = 'active';
