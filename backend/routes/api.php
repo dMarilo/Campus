@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\BorrowingController;
 use App\Http\Controllers\Api\DormController;
 use App\Http\Controllers\Api\RoomController;
 use App\Http\Controllers\Admin\StudentController;
+use App\Http\Controllers\Api\BuildingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -111,6 +112,22 @@ Route::middleware('auth:api')->group(function () {
         Route::post('/load',               [RoomController::class, 'loadRoom']);
         Route::put('/update/{id}',         [RoomController::class, 'updateRoom']);
         Route::delete('/delete/{id}',      [RoomController::class, 'deleteRoom']);
+    });
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Campus Buildings
+    |--------------------------------------------------------------------------
+    */
+
+    Route::prefix('buildings')->group(function () {
+        Route::get('/',          [BuildingController::class, 'index']);
+        Route::get('/{code}',    [BuildingController::class, 'showByCode']);
+
+        Route::post('/',         [BuildingController::class, 'store']);
+        Route::put('/{id}',      [BuildingController::class, 'update']);
+        Route::delete('/{id}',   [BuildingController::class, 'destroy']);
     });
 
 
