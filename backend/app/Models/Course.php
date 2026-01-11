@@ -26,6 +26,14 @@ class Course extends Model
     ];
 
 
+    public function books()
+    {
+        return $this->belongsToMany(\App\Models\Book::class,'course_book')->withPivot('mandatory')
+        ->withTimestamps();
+    }
+
+
+
     /**
      * Retrieves all courses from the database.
      *

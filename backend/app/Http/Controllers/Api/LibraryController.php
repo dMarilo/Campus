@@ -167,4 +167,13 @@ class LibraryController extends Controller
             'message' => 'Book deleted successfully.'
         ]);
     }
+
+    public function byCourse(int $courseId)
+    {
+        $book = new \App\Models\Book();
+
+        return response()->json([
+            'data' => $book->findByCourseId($courseId),
+        ]);
+    }
 }

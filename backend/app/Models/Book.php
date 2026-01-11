@@ -51,6 +51,13 @@ class Book extends Model
         return $this->hasMany(BookCopy::class);
     }
 
+    public function courses()
+    {
+        return $this->belongsToMany(\App\Models\Course::class,'course_book')->withPivot('mandatory')
+        ->withTimestamps();
+    }
+
+
     /*
     |--------------------------------------------------------------------------
     | Domain Methods
@@ -151,5 +158,21 @@ class Book extends Model
     {
         $book = $this->getBookById($id);
         return (bool) $book->delete();
+    }
+
+
+    /**
+     * Get all books for a given course.
+     *
+     * @param int $courseId
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function findByCourseId(int $courseId)
+    {
+        return $this->newQuery()
+            ->whereHas('courses', function ($query) use ($courseId) {
+                $query->where('courses.id', $courseId);
+            })
+            ->get();
     }
 }
