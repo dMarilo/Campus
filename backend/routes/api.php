@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\DormController;
 use App\Http\Controllers\Api\RoomController;
 use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\Api\BuildingController;
+use App\Http\Controllers\Api\CourseController;
 
 /*
 |--------------------------------------------------------------------------
@@ -131,6 +132,23 @@ Route::middleware('auth:api')->group(function () {
     });
 
 
+    /*
+    |--------------------------------------------------------------------------
+    | Courses
+    |--------------------------------------------------------------------------
+    */
+
+    Route::prefix('courses')->group(function () {
+        Route::get('/',                   [CourseController::class, 'index']);
+        Route::get('/code/{code}',       [CourseController::class, 'showByCode']);
+        Route::get('/department/{department}', [CourseController::class, 'showByDepartment']);
+        Route::get('/active',             [CourseController::class, 'active']);
+        Route::get('/{id}',               [CourseController::class, 'showById']);
+
+        Route::post('/',                   [CourseController::class, 'store']);
+        Route::put('/{id}',               [CourseController::class, 'update']);
+        Route::delete('/{id}',            [CourseController::class, 'destroy']);
+    });
 
 });
 
