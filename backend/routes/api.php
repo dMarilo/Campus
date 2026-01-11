@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\LibraryController;
 use App\Http\Controllers\Api\BorrowingController;
 use App\Http\Controllers\Api\DormController;
 use App\Http\Controllers\Api\RoomController;
+use App\Http\Controllers\Admin\StudentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,6 +29,7 @@ Route::get('/health', function () {
 */
 
 Route::post('/auth/login', [AuthController::class, 'login']);
+Route::post('/users', [UserController::class, 'store']);
 
 /*
 |--------------------------------------------------------------------------
@@ -43,7 +45,7 @@ Route::middleware('auth:api')->group(function () {
     |--------------------------------------------------------------------------
     */
 
-    Route::post('/users', [UserController::class, 'store']);
+    //Route::post('/users', [UserController::class, 'store']);
 
     /*
     |--------------------------------------------------------------------------
@@ -113,4 +115,8 @@ Route::middleware('auth:api')->group(function () {
 
 
 
+});
+
+Route::middleware(['auth:api', 'role:admin'])->group(function () {
+    Route::put('/admin/students/{id}', [StudentController::class, 'update']);
 });
