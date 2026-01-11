@@ -61,6 +61,8 @@ Route::middleware('auth:api')->group(function () {
         Route::post('/', [LibraryController::class, 'store']);
         Route::put('/{id}', [LibraryController::class, 'update']);
         Route::delete('/{id}', [LibraryController::class, 'destroy']);
+
+        Route::get('/course/{courseId}', [LibraryController::class, 'byCourse']);
     });
 
     /*
