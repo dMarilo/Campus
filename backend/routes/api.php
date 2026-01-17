@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\BuildingController;
 use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\Api\CourseClassController;
 use App\Http\Controllers\Api\AttendanceController;
+use App\Http\Controllers\Api\TeachingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -165,6 +166,9 @@ Route::middleware('auth:api')->group(function () {
 
         Route::get('/{classId}/students', [AttendanceController::class, 'studentsByClass']);
         Route::get('/students/{studentId}/classes', [AttendanceController::class, 'classesByStudent']);
+
+        Route::get('/{classId}/professors', [TeachingController::class, 'professorsByClass']);
+        Route::get('/professors/{professorId}/classes', [TeachingController::class, 'classesByProfessor']);
 
     });
 
