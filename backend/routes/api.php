@@ -10,6 +10,8 @@ use App\Http\Controllers\Api\RoomController;
 use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\Api\BuildingController;
 use App\Http\Controllers\Api\CourseController;
+use App\Http\Controllers\Api\CourseClassController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -151,6 +153,20 @@ Route::middleware('auth:api')->group(function () {
         Route::put('/{id}',               [CourseController::class, 'update']);
         Route::delete('/{id}',            [CourseController::class, 'destroy']);
     });
+
+        /*
+    |--------------------------------------------------------------------------
+    | Courses
+    |--------------------------------------------------------------------------
+    */
+
+    Route::prefix('classes')->group(function () {
+        Route::get('/', [CourseClassController::class, 'index']);
+    });
+
+
+
+
 
 });
 
