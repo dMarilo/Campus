@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\Api\CourseClassController;
 use App\Http\Controllers\Api\AttendanceController;
 use App\Http\Controllers\Api\TeachingController;
+use App\Http\Controllers\Api\ExamController;
 
 /*
 |--------------------------------------------------------------------------
@@ -250,6 +251,8 @@ Route::middleware('auth:api')->group(function () {
 
         // Get all classes taught by a specific professor
         Route::get('/professors/{professorId}/classes', [TeachingController::class, 'classesByProfessor']);
+
+        Route::get('/{classId}/exams/dates', [ExamController::class, 'examDatesByClass']);
     });
 
 });
