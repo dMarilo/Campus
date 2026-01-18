@@ -265,6 +265,7 @@ Route::middleware('auth:api')->group(function () {
     Route::prefix('classrooms')->group(function () {
 
         Route::get('/', [ClassroomController::class, 'index']);
+        Route::post('/{classroom}/start-session',[ClassroomController::class, 'startSession']);
     });
 
 });
