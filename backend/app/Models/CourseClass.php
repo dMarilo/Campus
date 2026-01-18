@@ -23,6 +23,7 @@ class CourseClass extends Model
         'academic_year_id',
         'iteration',
         'status',
+        'pin',
     ];
 
     /*
