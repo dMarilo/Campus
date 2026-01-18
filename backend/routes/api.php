@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\BuildingController;
 use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\Api\CourseClassController;
 use App\Http\Controllers\Api\AttendanceController;
+use App\Http\Controllers\Api\ClassroomController;
 use App\Http\Controllers\Api\TeachingController;
 use App\Http\Controllers\Api\ExamController;
 
@@ -253,6 +254,17 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/professors/{professorId}/classes', [TeachingController::class, 'classesByProfessor']);
 
         Route::get('/{classId}/exams/dates', [ExamController::class, 'examDatesByClass']);
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Classrooms
+    |--------------------------------------------------------------------------
+    | TODO
+    */
+    Route::prefix('classrooms')->group(function () {
+
+        Route::get('/', [ClassroomController::class, 'index']);
     });
 
 });
