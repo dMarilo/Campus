@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Classroom;
+use App\Models\ClassroomSession;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -72,5 +73,26 @@ class ClassroomController extends Controller
             'message' => 'Session ended successfully.',
             'data'    => $session,
         ]);
+    }
+
+    public function studentCheckIn(Request $request, int $classroomId)
+    {
+        $request->validate([
+            'student_code' => ['required', 'string'],
+        ]);
+
+        // Resolve ongoing session for classroom
+        $session = ClassroomSession::where('classroom_id', $classroomId)
+            ->where('status', 'ongoing')
+            ->firstOrFail();
+
+        $status = $session->checkInStudentByCode(
+            $request->input('student_code')
+        );
+
+        return response()->json([
+            'message' => 'Attendance recorded.',
+            'status'  => $status,
+        ], 201);
     }
 }
