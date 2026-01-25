@@ -1,0 +1,25 @@
+<main class="d-flex flex-nowrap app-root">
+
+  <div class="app-page flex-column flex-column-fluid">
+
+    <div class="app-wrapper position-relative">
+
+      <app-layout-sidebar
+        [isOpen]="sidebarOpen"
+        (toggleSidebar)="toggleSidebar()">
+      </app-layout-sidebar>
+
+      <div class="app-main flex-column flex-row-fluid">
+
+        <app-layout-header
+          (toggleSidebar)="toggleSidebar()">
+        </app-layout-header>
+
+        <div class="app-content-wrapper position-relative">
+          <router-outlet></router-outlet>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</main>
