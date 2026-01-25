@@ -68,4 +68,24 @@ export class ClassroomTerminalComponent {
         },
       });
   }
+
+  endSession(): void {
+    if (!this.sessionData || this.loading) {
+      return;
+    }
+
+    this.loading = true;
+
+    this.sessionService.endSession(this.classroomId).subscribe({
+      next: () => {
+        this.sessionData = null; // go back to PIN form
+        this.loading = false;
+      },
+      error: () => {
+        this.errorMessage = 'Failed to end session';
+        this.loading = false;
+      },
+    });
+  }
+
 }

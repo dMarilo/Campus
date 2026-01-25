@@ -36,6 +36,11 @@ class ClassroomSession extends Model
         return $this->belongsTo(CourseClass::class);
     }
 
+    public function professor()
+    {
+        return $this->belongsTo(Professor::class);
+    }
+
     /* -----------------------------------------------------------------
      |  State helpers
      | -----------------------------------------------------------------

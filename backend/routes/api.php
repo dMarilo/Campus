@@ -44,6 +44,7 @@ Route::post('/users', [UserController::class, 'store']);
 
     Route::prefix('classrooms')->group(function () {
         Route::post('/{classroom}/start-session',[ClassroomController::class, 'startSession']);
+        Route::post('/{classroom}/end-session',[ClassroomController::class, 'endSession']);
     });
 
 /*

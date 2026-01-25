@@ -25,4 +25,12 @@ export class ClassroomSessionService {
       }
     );
   }
+
+  endSession(classroomId: number) {
+    return this.http.post(
+      `${this.API_URL}/classrooms/${classroomId}/end-session`,
+      {}
+    );
+  }
+
 }

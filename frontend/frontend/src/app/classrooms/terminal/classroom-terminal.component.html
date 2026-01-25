@@ -6,19 +6,48 @@
   <div *ngIf="sessionData" class="success-box">
     <h3>✅ Session Started</h3>
 
+    <!-- CLASS (COURSE NAME) -->
     <div class="info-row">
       <span>Class:</span>
-      <strong>{{ sessionData.class?.name }}</strong>
+      <strong>
+        {{ sessionData.course_class?.course?.name }}
+      </strong>
     </div>
 
+    <!-- CLASSROOM -->
+    <div class="info-row">
+      <span>Classroom:</span>
+      <strong>
+        {{ sessionData.classroom?.name }}
+      </strong>
+    </div>
+
+    <!-- PROFESSOR -->
     <div class="info-row">
       <span>Professor:</span>
-      <strong>{{ sessionData.professor?.full_name }}</strong>
+      <strong>
+        {{ sessionData.professor?.full_name || '—' }}
+      </strong>
     </div>
 
+    <!-- START TIME -->
     <div class="info-row">
       <span>Started at:</span>
-      <strong>{{ sessionData.started_at | date:'shortTime' }}</strong>
+      <strong>
+        {{ sessionData.started_at | date:'shortTime' }}
+      </strong>
+    </div>
+
+    <!-- END SESSION BUTTON -->
+    <div class="actions-row">
+      <button
+        type="button"
+        class="end-session-btn"
+        (click)="endSession()"
+        [disabled]="loading"
+      >
+        ⛔ {{ loading ? 'Ending…' : 'End Session' }}
+      </button>
     </div>
   </div>
 

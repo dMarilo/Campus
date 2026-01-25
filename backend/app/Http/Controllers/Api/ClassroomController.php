@@ -45,6 +45,12 @@ class ClassroomController extends Controller
                 $request->input('professor_code')
             );
 
+            $session->load([
+                'classroom',
+                'professor',
+                'courseClass.course',
+            ]);
+
             return response()->json([
                 'message' => 'Session started successfully.',
                 'data'    => $session,
@@ -54,5 +60,17 @@ class ClassroomController extends Controller
             // Domain validation errors (PIN, professor, availability, etc.)
             throw $e;
         }
+    }
+
+    public function endSession(int $classroomId): JsonResponse
+    {
+        $classroom = Classroom::findOrFail($classroomId);
+
+        $session = $classroom->endSession();
+
+        return response()->json([
+            'message' => 'Session ended successfully.',
+            'data'    => $session,
+        ]);
     }
 }
