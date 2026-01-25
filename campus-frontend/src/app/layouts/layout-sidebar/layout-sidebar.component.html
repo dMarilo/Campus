@@ -1,0 +1,49 @@
+<div
+  class="app-sidebar flex-column d-flex"
+  [ngClass]="{ 'sidebar-open': isOpen }"
+>
+
+  <!-- Header -->
+  <div class="app-sidebar-header d-flex justify-content-between align-items-center">
+    <img
+      src="./assets/img/project/logo.svg"
+      class="h-25px"
+      alt="Logo"
+    >
+
+    <button
+      class="btn btn-sm"
+      type="button"
+      (click)="toggleSidebar.emit()"
+    >
+      <i class="fa-solid fa-bars"></i>
+    </button>
+  </div>
+
+  <!-- Menu -->
+  <div class="app-sidebar-menu">
+    <a
+      routerLink="/dashboard"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      Dashboard
+    </a>
+
+    <a routerLink="/courses" routerLinkActive="active">
+      Courses
+    </a>
+
+    <a routerLink="/classes" routerLinkActive="active">
+      Classes
+    </a>
+
+    <a routerLink="/classrooms" routerLinkActive="active">
+      Classrooms
+    </a>
+
+    <a routerLink="/attendance" routerLinkActive="active">
+      Attendance
+    </a>
+  </div>
+</div>

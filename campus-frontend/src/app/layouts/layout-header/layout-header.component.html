@@ -1,0 +1,89 @@
+<div class="app-header">
+
+  <div class="app-container container-fluid d-flex align-items-stretch flex-stack">
+
+    <!-- Mobile sidebar toggle + logo -->
+    <div
+      class="d-flex align-items-center d-block d-lg-none ms-n3"
+      title="Show sidebar menu"
+    >
+      <button
+        type="button"
+        class="btn btn-icon btn-active-color-primary w-35px h-35px me-2"
+        (click)="onToggleSidebar()"
+      >
+        <i class="fa-solid fa-bars"></i>
+      </button>
+
+      <img
+        alt="Logo"
+        src="./assets/img/project/logo.svg"
+        class="h-30px"
+      />
+    </div>
+
+    <!-- Navbar -->
+    <div class="app-navbar flex-lg-grow-1 d-flex justify-content-end">
+
+      <!-- User menu -->
+      <div class="app-navbar-item ms-1 ms-md-3 position-relative">
+
+        <button
+          type="button"
+          class="cursor-pointer symbol symbol-circle symbol-35px symbol-md-45px border-0 p-0"
+          (click)="toggleUserMenu()"
+        >
+          <img
+            src="./assets/img/photos/user.jpg"
+            alt="user"
+            class="rounded-circle"
+            width="40"
+            height="40"
+          >
+        </button>
+
+        <!-- Dropdown -->
+        <div
+          class="dropdown-menu dropdown-menu-end show"
+          *ngIf="userMenuOpen"
+        >
+          <div class="p-3 border-bottom d-flex align-items-center">
+            <img
+              src="./assets/img/photos/user.jpg"
+              class="rounded-circle me-2"
+              width="40"
+              height="40"
+            >
+            <div class="flex-column">
+              <div class="fw-bold">
+                {{ user?.full_name || 'User' }}
+              </div>
+              <div class="text-muted fs-7">
+                {{ user?.email || '' }}
+              </div>
+            </div>
+          </div>
+
+          <button
+            class="dropdown-item"
+            routerLink="/profile"
+            (click)="closeUserMenu()"
+          >
+            My Profile
+          </button>
+
+          <div class="dropdown-divider"></div>
+
+          <button
+            class="dropdown-item"
+            (click)="logout()"
+          >
+            Sign Out
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
