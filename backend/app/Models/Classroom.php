@@ -55,13 +55,13 @@ class Classroom extends Model
     //     return $this->belongsTo(ClassroomSession::class, 'active_session_id');
     // }
 
-    // /**
-    //  * All sessions held in this classroom
-    //  */
-    // public function sessions()
-    // {
-    //     return $this->hasMany(ClassroomSession::class);
-    // }
+    /**
+     * All sessions held in this classroom
+     */
+    public function sessions()
+    {
+        return $this->hasMany(ClassroomSession::class);
+    }
 
     /* -----------------------------------------------------------------
      |  State helpers (VERY useful)
@@ -179,6 +179,23 @@ class Classroom extends Model
 
             return $session;
         });
+    }
+
+    public function endSession(): ClassroomSession
+    {
+        $session = $this->sessions()
+            ->where('status', 'ongoing')
+            ->firstOrFail();
+
+        $session->update([
+            'status'   => 'finished',
+        ]);
+
+        $this->update([
+            'status' => 'empty',
+        ]);
+
+        return $session;
     }
 
 }

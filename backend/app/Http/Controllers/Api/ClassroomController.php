@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Classroom;
+use App\Models\ClassroomSession;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -45,6 +46,12 @@ class ClassroomController extends Controller
                 $request->input('professor_code')
             );
 
+            $session->load([
+                'classroom',
+                'professor',
+                'courseClass.course',
+            ]);
+
             return response()->json([
                 'message' => 'Session started successfully.',
                 'data'    => $session,
@@ -54,5 +61,38 @@ class ClassroomController extends Controller
             // Domain validation errors (PIN, professor, availability, etc.)
             throw $e;
         }
+    }
+
+    public function endSession(int $classroomId): JsonResponse
+    {
+        $classroom = Classroom::findOrFail($classroomId);
+
+        $session = $classroom->endSession();
+
+        return response()->json([
+            'message' => 'Session ended successfully.',
+            'data'    => $session,
+        ]);
+    }
+
+    public function studentCheckIn(Request $request, int $classroomId)
+    {
+        $request->validate([
+            'student_code' => ['required', 'string'],
+        ]);
+
+        // Resolve ongoing session for classroom
+        $session = ClassroomSession::where('classroom_id', $classroomId)
+            ->where('status', 'ongoing')
+            ->firstOrFail();
+
+        $status = $session->checkInStudentByCode(
+            $request->input('student_code')
+        );
+
+        return response()->json([
+            'message' => 'Attendance recorded.',
+            'status'  => $status,
+        ], 201);
     }
 }
