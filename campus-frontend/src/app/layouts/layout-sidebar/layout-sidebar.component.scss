@@ -1,8 +1,10 @@
 .app-sidebar {
   width: 240px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
   background: linear-gradient(180deg, #1e1e2f, #151521);
-  color: #fff;
-  padding: 24px 16px;
+  color: #ffffff;
 }
 
 .app-sidebar-header {
