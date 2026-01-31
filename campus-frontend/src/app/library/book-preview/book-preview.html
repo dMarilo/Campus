@@ -1,0 +1,11 @@
+<div class="container mt-4">
+    <h1>{{ book()?.title }}</h1>
+    <p>{{ book()?.author }}</p>
+    <p>{{ book()?.publisher }}</p>
+    <p>{{ book()?.publishedYear }}</p>
+    <p>{{ book()?.edition }}</p>
+    <p>{{ book()?.description }}</p>
+    <p>{{ book()?.totalCopies }}</p>
+    <p>{{ book()?.availableCopies }}</p>
+    <button class="btn btn-primary" (click)="deleteBook()">Delete Book</button>
+</div>

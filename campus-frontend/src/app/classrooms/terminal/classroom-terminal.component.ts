@@ -8,7 +8,7 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 
-import { ClassroomSessionService } from '../../services/classroom-session.service';
+import { ClassroomSessionService } from '../classroom-session.service';
 
 @Component({
   standalone: true,

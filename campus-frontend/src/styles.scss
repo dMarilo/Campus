@@ -5,7 +5,7 @@
 /* FontAwesome config MUST be before @use */
 $fa-font-path: '/assets/webfonts';
 
-@use 'bootstrap/scss/bootstrap';
+@use 'bootstrap/scss/bootstrap.scss';
 @use '@fortawesome/fontawesome-free/scss/fontawesome';
 @use '@fortawesome/fontawesome-free/scss/solid';
 @use '@fortawesome/fontawesome-free/scss/regular';

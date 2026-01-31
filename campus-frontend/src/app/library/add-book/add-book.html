@@ -1,0 +1,38 @@
+<div class="container mt-4">
+  <h2>Add Book</h2>
+  <form [formGroup]="form" (ngSubmit)="addBook()">
+    <div class="mb-3">
+        <label for="title" class="form-label">Title</label>
+        <input type="text" class="form-control" id="title" formControlName="title">
+    </div>
+    <div class="mb-3">
+        <label for="author" class="form-label">Author</label>
+        <input type="text" class="form-control" id="author" formControlName="author">
+    </div>
+    <div class="mb-3">
+        <label for="publisher" class="form-label">Publisher</label>
+        <input type="text" class="form-control" id="publisher" formControlName="publisher">
+    </div>
+    <div class="mb-3">
+        <label for="publishedYear" class="form-label">Published Year</label>
+        <input type="number" class="form-control" id="publishedYear" formControlName="publishedYear">
+    </div>
+    <div class="mb-3">
+        <label for="edition" class="form-label">Edition</label>
+        <input type="text" class="form-control" id="edition" formControlName="edition">
+    </div>
+    <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <textarea class="form-control" id="description" formControlName="description"></textarea>
+    </div>
+    <div class="mb-3">
+        <label for="totalCopies" class="form-label">Total Copies</label>
+        <input type="number" class="form-control" id="totalCopies" formControlName="totalCopies">
+    </div>
+    <div class="mb-3">
+        <label for="availableCopies" class="form-label">Available Copies</label>
+        <input type="number" class="form-control" id="availableCopies" formControlName="availableCopies">
+    </div>
+    <button type="submit" class="btn btn-primary" [disabled]="form.invalid">Add Book</button>
+  </form>
+</div>
