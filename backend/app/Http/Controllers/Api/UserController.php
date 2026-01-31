@@ -6,26 +6,29 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Student;
 use App\Models\Professor;
+use App\Notifications\WelcomeUserNotification;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
     /**
-     * Creates a new user and an associated profile.
+     * Creates a new user and an associated profile (Admin Only).
      *
      * This endpoint:
      *  - Validates user credentials and profile information
-     *  - Creates a new user record in the users table
+     *  - Creates a new user record with a temporary password
      *  - Automatically creates a corresponding profile
      *    based on the selected user type (student or professor)
+     *  - Generates a verification token
+     *  - Sends a welcome email with verification link and temporary password
      *  - Ensures both user and profile creation occur atomically
      *    within a database transaction
      *
-     * The created user is immediately set to an active status.
-     * Profile records are initialized with minimal required data
-     * and can be completed later.
+     * The created user must verify their email and set a new password
+     * before they can log in.
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -46,15 +49,21 @@ class UserController extends Controller
 
         return DB::transaction(function () use ($validated) {
 
-            // 1️⃣ Create user (always)
+            // Store the plain password for email (before hashing)
+            $temporaryPassword = $validated['password'];
+
+            // 1️⃣ Create user with temporary password
             $user = User::create([
                 'email'    => $validated['email'],
-                'password' => $validated['password'], // auto-hashed
+                'password' => $temporaryPassword, // Will be auto-hashed
                 'type'     => $validated['type'],
-                'status'   => User::STATUS_ACTIVE,
+                'status'   => User::STATUS_INACTIVE, // Inactive until verified
             ]);
 
-            // 2️⃣ Create profile shell
+            // 2️⃣ Generate verification token
+            $verificationToken = $user->generateVerificationToken();
+
+            // 3️⃣ Create profile shell
             if ($user->type === User::TYPE_STUDENT) {
                 Student::create([
                     'user_id'    => $user->id,
@@ -75,7 +84,11 @@ class UserController extends Controller
                 ]);
             }
 
+            // 4️⃣ Send welcome email with verification link
+            $user->notify(new WelcomeUserNotification($verificationToken, $temporaryPassword));
+
             return response()->json([
+                'message' => 'User created successfully. Verification email sent.',
                 'data' => [
                     'id'     => $user->id,
                     'email'  => $user->email,
