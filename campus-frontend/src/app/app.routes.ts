@@ -5,15 +5,20 @@ import { ClassroomTerminalComponent } from './classrooms/terminal/classroom-term
 
 import { AuthGuard } from './auth/auth.guard';
 import { GuestGuard } from './auth/guest.guard';
+import { LayoutComponent } from './main-layout/layout/layout.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
 
 export const routes: Routes = [
-
+  {
+    path: '',
+    component: LayoutComponent,
+    children: [{ path: 'dashboard', component: DashboardComponent }],
+  },
   {
     path: 'login',
     component: LoginComponent,
     canActivate: [GuestGuard],
   },
-
   {
     path: 'classrooms/:id/terminal',
     component: ClassroomTerminalComponent,
