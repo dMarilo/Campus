@@ -3,87 +3,83 @@
   <h2 class="terminal-title">Classroom Session Terminal</h2>
 
   <!-- SUCCESS STATE -->
-  <div *ngIf="sessionData" class="success-box">
-    <h3>✅ Session Started</h3>
-
-    <!-- CLASS (COURSE NAME) -->
-    <div class="info-row">
-      <span>Class:</span>
-      <strong>
-        {{ sessionData.course_class?.course?.name }}
-      </strong>
+  @if (sessionData) {
+    <div class="success-box">
+      <h3>✅ Session Started</h3>
+      <!-- CLASS (COURSE NAME) -->
+      <div class="info-row">
+        <span>Class:</span>
+        <strong>
+          {{ sessionData.course_class?.course?.name }}
+        </strong>
+      </div>
+      <!-- CLASSROOM -->
+      <div class="info-row">
+        <span>Classroom:</span>
+        <strong>
+          {{ sessionData.classroom?.name }}
+        </strong>
+      </div>
+      <!-- PROFESSOR -->
+      <div class="info-row">
+        <span>Professor:</span>
+        <strong>
+          {{ sessionData.professor?.full_name || '—' }}
+        </strong>
+      </div>
+      <!-- START TIME -->
+      <div class="info-row">
+        <span>Started at:</span>
+        <strong>
+          {{ sessionData.started_at | date:'shortTime' }}
+        </strong>
+      </div>
+      <!-- END SESSION BUTTON -->
+      <div class="actions-row">
+        <button
+          type="button"
+          class="end-session-btn"
+          (click)="endSession()"
+          [disabled]="loading"
+          >
+          ⛔ {{ loading ? 'Ending…' : 'End Session' }}
+        </button>
+      </div>
     </div>
-
-    <!-- CLASSROOM -->
-    <div class="info-row">
-      <span>Classroom:</span>
-      <strong>
-        {{ sessionData.classroom?.name }}
-      </strong>
-    </div>
-
-    <!-- PROFESSOR -->
-    <div class="info-row">
-      <span>Professor:</span>
-      <strong>
-        {{ sessionData.professor?.full_name || '—' }}
-      </strong>
-    </div>
-
-    <!-- START TIME -->
-    <div class="info-row">
-      <span>Started at:</span>
-      <strong>
-        {{ sessionData.started_at | date:'shortTime' }}
-      </strong>
-    </div>
-
-    <!-- END SESSION BUTTON -->
-    <div class="actions-row">
-      <button
-        type="button"
-        class="end-session-btn"
-        (click)="endSession()"
-        [disabled]="loading"
-      >
-        ⛔ {{ loading ? 'Ending…' : 'End Session' }}
-      </button>
-    </div>
-  </div>
+  }
 
   <!-- FORM -->
-  <form
-    *ngIf="!sessionData"
-    [formGroup]="form"
-    (ngSubmit)="startSession()"
-    class="terminal-form"
-  >
-
-    <div class="form-group">
-      <label>Professor Code</label>
-      <input
-        type="text"
-        formControlName="professor_code"
-        autocomplete="off"
-      />
-    </div>
-
-    <div class="form-group">
-      <label>PIN</label>
-      <input
-        type="password"
-        formControlName="class_pin"
-        autocomplete="off"
-      />
-    </div>
-
-    <button type="submit" [disabled]="loading">
-      {{ loading ? 'Starting…' : 'Start Session' }}
-    </button>
-
-    <div *ngIf="errorMessage" class="error-box">
-      ❌ {{ errorMessage }}
-    </div>
-  </form>
+  @if (!sessionData) {
+    <form
+      [formGroup]="form"
+      (ngSubmit)="startSession()"
+      class="terminal-form"
+      >
+      <div class="form-group">
+        <label>Professor Code</label>
+        <input
+          type="text"
+          formControlName="professor_code"
+          autocomplete="off"
+          />
+      </div>
+      <div class="form-group">
+        <label>PIN</label>
+        <input
+          type="password"
+          formControlName="class_pin"
+          autocomplete="off"
+          />
+      </div>
+      <button type="submit" [disabled]="loading">
+        {{ loading ? 'Starting…' : 'Start Session' }}
+      </button>
+      @if (errorMessage) {
+        <div class="error-box">
+          ❌ {{ errorMessage }}
+        </div>
+      }
+    </form>
+  }
 
 </div>

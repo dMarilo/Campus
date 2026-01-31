@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 @Component({
   selector: 'app-current-user',
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './current-user.component.html',
   styleUrl: './current-user.component.scss',
 })

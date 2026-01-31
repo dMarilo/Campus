@@ -16,9 +16,11 @@
     <form [formGroup]="formGroup" (ngSubmit)="authenticate()">
 
       <!-- Error -->
-      <div *ngIf="errorMessage && !isLoading" class="alert alert-danger">
-        {{ errorMessage }}
-      </div>
+      @if (errorMessage && !isLoading) {
+        <div class="alert alert-danger">
+          {{ errorMessage }}
+        </div>
+      }
 
       <!-- Email -->
       <div class="mb-3">
@@ -38,19 +40,23 @@
               formGroup.controls.email.invalid &&
               formGroup.controls.email.touched
           }"
-        />
+          />
 
-        <div
-          class="invalid-feedback"
-          *ngIf="formGroup.controls.email.hasError('required')">
-          This field is required
-        </div>
+        @if (formGroup.controls.email.hasError('required')) {
+          <div
+            class="invalid-feedback"
+            >
+            This field is required
+          </div>
+        }
 
-        <div
-          class="invalid-feedback"
-          *ngIf="formGroup.controls.email.hasError('email')">
-          Please enter a valid email address
-        </div>
+        @if (formGroup.controls.email.hasError('email')) {
+          <div
+            class="invalid-feedback"
+            >
+            Please enter a valid email address
+          </div>
+        }
       </div>
 
       <!-- Password -->
@@ -71,13 +77,15 @@
               formGroup.controls.password.invalid &&
               formGroup.controls.password.touched
           }"
-        />
+          />
 
-        <div
-          class="invalid-feedback"
-          *ngIf="formGroup.controls.password.hasError('required')">
-          This field is required
-        </div>
+        @if (formGroup.controls.password.hasError('required')) {
+          <div
+            class="invalid-feedback"
+            >
+            This field is required
+          </div>
+        }
       </div>
 
       <!-- Forgot password -->
