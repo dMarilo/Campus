@@ -1,30 +1,25 @@
 <?php
-
 namespace App\Models;
-
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Collection;
 
 class Student extends Model
 {
     use HasFactory;
-
     /*
     |--------------------------------------------------------------------------
     | Constants
     |--------------------------------------------------------------------------
     */
-
     public const STATUS_ACTIVE    = 'active';
     public const STATUS_GRADUATED = 'graduated';
     public const STATUS_SUSPENDED = 'suspended';
-
     /*
     |--------------------------------------------------------------------------
     | Mass Assignment
     |--------------------------------------------------------------------------
     */
-
     protected $fillable = [
         'user_id',
         'email',
@@ -40,43 +35,60 @@ class Student extends Model
         'gpa',
         'status',
     ];
-
     /*
     |--------------------------------------------------------------------------
     | Casts
     |--------------------------------------------------------------------------
     */
-
     protected $casts = [
         'date_of_birth' => 'date',
         'gpa' => 'decimal:2',
     ];
-
     /*
     |--------------------------------------------------------------------------
     | Relationships
     |--------------------------------------------------------------------------
     */
-
     public function user()
     {
         return $this->belongsTo(User::class);
     }
-
     /*
     |--------------------------------------------------------------------------
     | Helpers
     |--------------------------------------------------------------------------
     */
-
     public function isActive(): bool
     {
         return $this->status === self::STATUS_ACTIVE;
     }
-
     public function fullName(): string
     {
         return "{$this->first_name} {$this->last_name}";
+    }
+    /*
+    |--------------------------------------------------------------------------
+    | Retrieval Methods
+    |--------------------------------------------------------------------------
+    */
+    public static function getAllStudents(): Collection
+    {
+        return self::all();
+    }
+
+    public static function getStudentById(int $id): ?self
+    {
+        return self::find($id);
+    }
+
+    public static function getStudentByCode(string $code): ?self
+    {
+        return self::where('code', $code)->first();
+    }
+
+    public static function getStudentsByYearOfStudy(int $year): Collection
+    {
+        return self::where('year_of_study', $year)->get();
     }
 
     /*
@@ -84,11 +96,9 @@ class Student extends Model
     | Admin actions
     |--------------------------------------------------------------------------
     */
-
     public static function updateByAdmin(int $id, array $data): self
     {
         $student = self::findOrFail($id);
-
         $student->fill([
             'email'          => $data['email']          ?? $student->email,
             'first_name'     => $data['first_name']     ?? $student->first_name,
@@ -103,11 +113,7 @@ class Student extends Model
             'gpa'            => $data['gpa']            ?? $student->gpa,
             'status'         => $data['status']         ?? $student->status,
         ]);
-
         $student->save();
-
         return $student;
     }
-
-
 }

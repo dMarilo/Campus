@@ -285,6 +285,33 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/{classId}/exams/dates', [ExamController::class, 'examDatesByClass']);
     });
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | Students
+    |--------------------------------------------------------------------------
+    | Manage student records and retrieve student information.
+    */
+
+    Route::prefix('students')->group(function () {
+
+        // Get all students
+        // GET http://localhost:8000/api/students
+        Route::get('/', [StudentController::class, 'index']);
+
+        // Get student by code
+        // GET http://localhost:8000/api/students/code/STU2024001
+        Route::get('/code/{code}', [StudentController::class, 'showByCode']);
+
+        // Get students by year of study
+        // GET http://localhost:8000/api/students/year/3
+        Route::get('/year/{year}', [StudentController::class, 'showByYear']);
+
+        // Get student by ID
+        // GET http://localhost:8000/api/students/1
+        Route::get('/{id}', [StudentController::class, 'show']);
+    });
+
     /*
     |--------------------------------------------------------------------------
     | Classrooms
