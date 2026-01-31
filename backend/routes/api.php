@@ -66,10 +66,16 @@ Route::middleware('auth:api')->group(function () {
 
     Route::prefix('books')->group(function () {
 
+        // Search books
+        // GET http://localhost:8000/api/books/search?q=electronics
+        Route::get('/search', [LibraryController::class, 'search']);
+
         // Get all books
+        // GET http://localhost:8000/api/books
         Route::get('/', [LibraryController::class, 'index']);
 
         // Get a single book by ID
+        // GET http://localhost:8000/api/books/1
         Route::get('/{id}', [LibraryController::class, 'show']);
 
         // Create a new book
@@ -82,6 +88,7 @@ Route::middleware('auth:api')->group(function () {
         Route::delete('/{id}', [LibraryController::class, 'destroy']);
 
         // Get all books required for a specific course
+        // GET http://localhost:8000/api/books/course/1
         Route::get('/course/{courseId}', [LibraryController::class, 'byCourse']);
     });
 

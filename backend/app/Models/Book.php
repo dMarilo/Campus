@@ -106,7 +106,11 @@ class Book extends Model
         return self::query()
             ->where(function ($q) use ($keywords) {
                 foreach ($keywords as $word) {
-                    $q->where('title', 'LIKE', "%{$word}%");
+                    $q->where(function ($sub) use ($word) {
+                        $sub->where('title', 'LIKE', "%{$word}%")
+                            ->orWhere('author', 'LIKE', "%{$word}%")
+                            ->orWhere('publisher', 'LIKE', "%{$word}%");
+                    });
                 }
             })
             ->get();
