@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject
@@ -27,8 +28,6 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasOne(Professor::class);
     }
-
-
 
     /*
     |--------------------------------------------------------------------------
@@ -57,6 +56,9 @@ class User extends Authenticatable implements JWTSubject
         'password',
         'type',
         'status',
+        'verification_token',
+        'verification_token_expires_at',
+        'must_reset_password',
     ];
 
     /*
@@ -68,6 +70,7 @@ class User extends Authenticatable implements JWTSubject
     protected $hidden = [
         'password',
         'remember_token',
+        'verification_token',
     ];
 
     /*
@@ -81,6 +84,8 @@ class User extends Authenticatable implements JWTSubject
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'verification_token_expires_at' => 'datetime',
+            'must_reset_password' => 'boolean',
         ];
     }
 
@@ -100,6 +105,64 @@ class User extends Authenticatable implements JWTSubject
         return $this->status === self::STATUS_ACTIVE;
     }
 
+    public function isEmailVerified(): bool
+    {
+        return $this->email_verified_at !== null;
+    }
+
+    public function needsPasswordReset(): bool
+    {
+        return $this->must_reset_password === true;
+    }
+
+    /**
+     * Generate a verification token for the user.
+     */
+    public function generateVerificationToken(): string
+    {
+        $token = Str::random(64);
+
+        $this->update([
+            'verification_token' => hash('sha256', $token),
+            'verification_token_expires_at' => now()->addHours(48),
+            'must_reset_password' => true,
+        ]);
+
+        return $token;
+    }
+
+    /**
+     * Verify the token and mark email as verified.
+     */
+    public function verifyEmail(string $token): bool
+    {
+        if ($this->verification_token !== hash('sha256', $token)) {
+            return false;
+        }
+
+        if ($this->verification_token_expires_at && $this->verification_token_expires_at->isPast()) {
+            return false;
+        }
+
+        $this->update([
+            'email_verified_at' => now(),
+            'verification_token' => null,
+            'verification_token_expires_at' => null,
+        ]);
+
+        return true;
+    }
+
+    /**
+     * Complete password reset after verification.
+     */
+    public function completePasswordReset(string $newPassword): void
+    {
+        $this->update([
+            'password' => $newPassword,
+            'must_reset_password' => false,
+        ]);
+    }
 
     /*
     |--------------------------------------------------------------------------

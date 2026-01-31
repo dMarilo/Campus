@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\Api\CourseClassController;
 use App\Http\Controllers\Api\AttendanceController;
 use App\Http\Controllers\Api\ClassroomController;
+use App\Http\Controllers\Api\EmailVerificationController;
 use App\Http\Controllers\Api\TeachingController;
 use App\Http\Controllers\Api\ExamController;
 
@@ -40,13 +41,20 @@ Route::get('/health', function () {
 */
 
 Route::post('/auth/login', [AuthController::class, 'login']);
-Route::post('/users', [UserController::class, 'store']);
+//Route::post('/users', [UserController::class, 'store']);
 
     Route::prefix('classrooms')->group(function () {
         Route::post('/{classroom}/start-session',[ClassroomController::class, 'startSession']);
         Route::post('/{classroom}/end-session',[ClassroomController::class, 'endSession']);
         Route::post('/{classroom}/check-in',[ClassroomController::class, 'studentCheckIn']);
     });
+
+
+Route::prefix('email')->group(function () {
+    Route::post('/verify', [EmailVerificationController::class, 'verify']);
+    Route::post('/set-password', [EmailVerificationController::class, 'setPassword']);
+    Route::post('/resend', [EmailVerificationController::class, 'resend']);
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -57,6 +65,14 @@ Route::post('/users', [UserController::class, 'store']);
 
 Route::middleware('auth:api')->group(function () {
 
+
+    Route::post('/auth/logout', [AuthController::class, 'logout']);
+    Route::post('/auth/refresh', [AuthController::class, 'refresh']);
+
+    // Admin-only routes
+    Route::middleware('admin')->group(function () {
+        Route::post('/users', [UserController::class, 'store']);
+    });
     /*
     |--------------------------------------------------------------------------
     | Books / Library
