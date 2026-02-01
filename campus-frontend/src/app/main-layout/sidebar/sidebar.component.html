@@ -1,58 +1,71 @@
 <div class="d-flex flex-column flex-shrink-0 p-3 bg-light w-100 h-100">
+
+  <!-- Logo / Brand -->
   <a
-    href="/"
+    routerLink="/dashboard"
     class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none"
   >
-    <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
-    <span class="fs-4">Sidebar</span>
+    <i class="fa fa-university fa-2x text-primary me-2"></i>
+    <span class="fs-4 fw-bold">Campus</span>
   </a>
+
   <hr />
+
+  <!-- Navigation -->
   <ul class="nav nav-pills flex-column mb-auto">
-    <li>
+    <li class="nav-item">
       <a routerLink="/dashboard" routerLinkActive="active" class="nav-link link-dark">
-        <svg class="bi me-2" width="16" height="16"><use xlink:href="#speedometer2"></use></svg>
+        <i class="fa fa-home me-2"></i>
         Dashboard
       </a>
     </li>
-    <li>
+
+    <li class="nav-item">
       <a routerLink="/library" routerLinkActive="active" class="nav-link link-dark">
-        <svg class="bi me-2" width="16" height="16"><use xlink:href="#table"></use></svg>
+        <i class="fa fa-book me-2"></i>
         Library
       </a>
     </li>
-    <li>
+
+    <li class="nav-item">
       <a routerLink="/dorm" routerLinkActive="active" class="nav-link link-dark">
-        <svg class="bi me-2" width="16" height="16"><use xlink:href="#grid"></use></svg>
+        <i class="fa fa-bed me-2"></i>
         Dorm
       </a>
     </li>
-    <li>
+
+    <li class="nav-item">
       <a routerLink="/classes" routerLinkActive="active" class="nav-link link-dark">
-        <svg class="bi me-2" width="16" height="16"><use xlink:href="#people-circle"></use></svg>
+        <i class="fa fa-chalkboard-teacher me-2"></i>
         Classes
       </a>
     </li>
-    <li>
+
+    <li class="nav-item">
       <a routerLink="/students" routerLinkActive="active" class="nav-link link-dark">
-        <svg class="bi me-2" width="16" height="16"><use xlink:href="#people-circle"></use></svg>
+        <i class="fa fa-user-graduate me-2"></i>
         Students
       </a>
     </li>
-    <li>
+
+    <li class="nav-item">
       <a routerLink="/professors" routerLinkActive="active" class="nav-link link-dark">
-        <svg class="bi me-2" width="16" height="16"><use xlink:href="#people-circle"></use></svg>
+        <i class="fa fa-chalkboard-teacher me-2"></i>
         Professors
       </a>
     </li>
-    <li>
+
+    <li class="nav-item">
       <a routerLink="/exams" routerLinkActive="active" class="nav-link link-dark">
-        <svg class="bi me-2" width="16" height="16"><use xlink:href="#people-circle"></use></svg>
+        <i class="fa fa-file-alt me-2"></i>
         Exams
       </a>
     </li>
   </ul>
+
   <hr />
 
+  <!-- User dropdown -->
   <div ngbDropdown class="d-inline-block">
     <button
       type="button"
@@ -60,22 +73,37 @@
       id="user-dropdown"
       ngbDropdownToggle
     >
-    <div>
-
+      <div class="d-flex align-items-center">
         <img
-        src="https://github.com/mdo.png"
-        alt=""
-        width="32"
-        height="32"
-        class="rounded-circle me-2"
+          [src]="user?.avatar || 'https://ui-avatars.com/api/?name=' + (user?.name || 'User')"
+          alt="User avatar"
+          width="32"
+          height="32"
+          class="rounded-circle me-2"
         />
-        <strong>Dusan</strong>
-    </div>
+        <strong>{{ user?.name || 'User' }}</strong>
+      </div>
+      <i class="fa fa-chevron-down"></i>
     </button>
-    <div ngbDropdownMenu aria-labelledby="user-dropdown">
-      <button ngbDropdownItem>Profile</button>
-      <button ngbDropdownItem>Settings</button>
-      <button ngbDropdownItem>Logout</button>
+
+    <div ngbDropdownMenu aria-labelledby="user-dropdown" class="w-100">
+      <button ngbDropdownItem routerLink="/profile">
+        <i class="fa fa-user me-2"></i>
+        Profile
+      </button>
+
+      <button ngbDropdownItem routerLink="/settings">
+        <i class="fa fa-cog me-2"></i>
+        Settings
+      </button>
+
+      <div class="dropdown-divider"></div>
+
+      <button ngbDropdownItem (click)="logout()" class="text-danger">
+        <i class="fa fa-sign-out-alt me-2"></i>
+        Logout
+      </button>
     </div>
   </div>
+
 </div>

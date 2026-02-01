@@ -1,0 +1,50 @@
+.book-row {
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: #f8f9fa;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+}
+
+.table {
+  margin-bottom: 0;
+}
+
+.input-group-text {
+  border-right: 0;
+}
+
+.form-control {
+  border-left: 0;
+
+  &:focus {
+    border-color: #ced4da;
+    box-shadow: none;
+  }
+}
+
+.spinner-border {
+  animation: spinner-border 0.75s linear infinite;
+}
+
+@keyframes spinner-border {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Pulse animation for loading text
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.text-center.py-5 {
+  animation: pulse 1.5s ease-in-out infinite;
+}

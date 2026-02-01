@@ -1,6 +1,5 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, effect } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { NgbPagination } from '@ng-bootstrap/ng-bootstrap';
 import { ReactiveFormsModule } from '@angular/forms';
 import { LibraryService } from '../library.service';
 import { RouterLink } from '@angular/router';
@@ -15,6 +14,8 @@ export class LabrirayTable {
   libraryService = inject(LibraryService);
   books = computed(() => this.libraryService.booksSignal());
   searchTerm = signal<string>('');
+  isLoading = signal<boolean>(true);
+
   filteredBooks = computed(() => {
     return this.books().filter(
       (book) =>
@@ -24,10 +25,28 @@ export class LabrirayTable {
         book.description.toLowerCase().includes(this.searchTerm().toLowerCase()),
     );
   });
-  page = 1;
-  pageSize = 10;
+
+  constructor() {
+    // Watch for when books are loaded
+    effect(() => {
+      if (this.books().length > 0) {
+        this.isLoading.set(false);
+      }
+    });
+  }
 
   deleteBook(id: number) {
-    this.libraryService.deleteBook(id);
+    const book = this.books().find(b => b.id === id);
+    if (confirm(`Are you sure you want to delete "${book?.title}"?`)) {
+      this.libraryService.deleteBook(id).subscribe({
+        next: () => {
+          console.log('Book deleted successfully');
+        },
+        error: (error) => {
+          console.error('Error deleting book:', error);
+          alert('Failed to delete book');
+        }
+      });
+    }
   }
 }

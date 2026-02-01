@@ -3,8 +3,8 @@ import { Routes } from '@angular/router';
 import { LoginComponent } from './auth/login/login.component';
 import { ClassroomTerminalComponent } from './classrooms/terminal/classroom-terminal.component';
 
-import { AuthGuard } from './auth/auth.guard';
-import { GuestGuard } from './auth/guest.guard';
+import { authGuard } from './auth/auth.guard';
+import { loginGuard } from './auth/login.guard';
 import { LayoutComponent } from './main-layout/layout/layout.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { LabrirayLayout } from './library/labriray-layout/labriray-layout';
@@ -13,11 +13,21 @@ import { BookPreview } from './library/book-preview/book-preview';
 import { LabrirayTable } from './library/labriray-table/labriray-table';
 
 export const routes: Routes = [
+  // Protected routes (require authentication)
   {
     path: '',
     component: LayoutComponent,
+    canActivate: [authGuard], // Protect all routes under LayoutComponent
     children: [
-      { path: 'dashboard', component: DashboardComponent },
+      {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full'
+      },
+      {
+        path: 'dashboard',
+        component: DashboardComponent
+      },
       {
         path: 'library',
         component: LabrirayLayout,
@@ -34,16 +44,22 @@ export const routes: Routes = [
       { path: 'exams', component: LabrirayLayout },
     ],
   },
+
+  // Login route (only accessible when not authenticated)
   {
     path: 'login',
     component: LoginComponent,
-    canActivate: [GuestGuard],
+    canActivate: [loginGuard], // Redirect to dashboard if already logged in
   },
+
+  // Classroom terminal (protected)
   {
     path: 'classrooms/:id/terminal',
     component: ClassroomTerminalComponent,
+    canActivate: [authGuard],
   },
 
+  // Wildcard - redirect to login if not authenticated, dashboard if authenticated
   {
     path: '**',
     redirectTo: 'login',

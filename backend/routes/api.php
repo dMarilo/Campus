@@ -32,6 +32,7 @@ Route::get('/health', function () {
     ]);
 });
 
+
 /*
 |--------------------------------------------------------------------------
 | Authentication & Public User Actions

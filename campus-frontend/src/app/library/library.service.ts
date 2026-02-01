@@ -1,73 +1,93 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
 import { environment } from '../../environments/environment';
+import { Observable } from 'rxjs';
+import { tap, map } from 'rxjs/operators';
+
+interface Book {
+  id: number;
+  title: string;
+  author: string;
+  publisher: string;
+  published_year: number;
+  edition: string;
+  description: string;
+  total_copies: number;
+  available_copies: number;
+  created_at?: string;
+  updated_at?: string;
+}
+
+interface BooksResponse {
+  data: Book[];
+}
+
+interface BookResponse {
+  data: Book;
+}
 
 @Injectable()
 export class LibraryService {
-  booksSignal = signal<any[]>([]);
+  booksSignal = signal<Book[]>([]);
 
   constructor(private http: HttpClient) {
     this.getBooks();
   }
 
   getBooks() {
-    this.booksSignal.set([
-      {
-        id: 1,
-        title: 'The Great Gatsby',
-        author: 'F. Scott Fitzgerald',
-        publisher: "Charles Scribner's Sons",
-        publishedYear: 1925,
-        edition: 'First',
-        description: 'A novel set in the Jazz Age on Long Island, near New York City.',
-        totalCopies: 15,
-        availableCopies: 10,
+    this.http.get<BooksResponse>(`${environment.apiBaseUrl}/books`).subscribe({
+      next: (response: any) => {
+        this.booksSignal.set(response.data);
       },
-      {
-        id: 2,
-        title: '1984',
-        author: 'George Orwell',
-        publisher: 'Secker & Warburg',
-        publishedYear: 1949,
-        edition: 'First',
-        description: 'A novel about the totalitarian state',
-        totalCopies: 10,
-        availableCopies: 10,
-      },
-      {
-        id: 3,
-        title: 'To Kill a Mockingbird',
-        author: 'Harper Lee',
-        publisher: 'J. B. Lippincott & Co.',
-        publishedYear: 1960,
-        edition: 'First',
-        description: 'A novel about the racial tensions in the American South',
-        totalCopies: 10,
-        availableCopies: 10,
-      },
-    ]);
+      error: (error) => {
+        console.error('Error fetching books', error);
+        this.booksSignal.set([]);
+      }
+    });
   }
 
-  getBook(id: number) {
+  getBook(id: number): Book | undefined {
     return this.booksSignal().find((book) => book.id === id);
   }
 
-  searchBooks(query: string) {
-    return this.http.get(`${environment.apiBaseUrl}/api/books/search?q=${query}`);
+  searchBooks(query: string): Observable<Book[]> {
+    return this.http.get<BooksResponse>(`${environment.apiBaseUrl}/books/search?q=${query}`)
+      .pipe(map(response => response.data));
   }
 
-  createBook(book: any) {
-    // this.http.post(`${environment.apiBaseUrl}/api/books`, book).subscribe((response) => {
-    //   this.booksSignal.update((books) => [...books, response]);
-    // });
-    this.booksSignal.update((books) => [...books, book]);
+  createBook(book: Partial<Book>): Observable<Book> {
+    return this.http.post<BookResponse>(`${environment.apiBaseUrl}/books`, book)
+      .pipe(
+        map(response => response.data),
+        tap((newBook) => {
+          this.booksSignal.update((books) => [...books, newBook]);
+        })
+      );
   }
 
-  updateBook(id: number, book: any) {
-    return this.http.put(`${environment.apiBaseUrl}/api/books/${id}`, book);
+  updateBook(id: number, book: Partial<Book>): Observable<Book> {
+    return this.http.put<BookResponse>(`${environment.apiBaseUrl}/books/${id}`, book)
+      .pipe(
+        map(response => response.data),
+        tap((updatedBook) => {
+          this.booksSignal.update((books) =>
+            books.map(b => b.id === id ? updatedBook : b)
+          );
+        })
+      );
   }
 
-  deleteBook(id: number) {
-    this.booksSignal.update((books) => books.filter((book) => book.id !== id));
+  deleteBook(id: number): Observable<any> {
+    return this.http.delete(`${environment.apiBaseUrl}/books/${id}`)
+      .pipe(
+        tap(() => {
+          this.booksSignal.update((books) => books.filter((book) => book.id !== id));
+        })
+      );
+  }
+
+  getBooksByCourse(courseId: number): Observable<Book[]> {
+    return this.http.get<BooksResponse>(`${environment.apiBaseUrl}/books/course/${courseId}`)
+      .pipe(map(response => response.data));
   }
 }

@@ -1,63 +1,111 @@
-<form>
-  <div class="mb-3 row">
-    <label for="table-complete-search" class="col-xs-3 col-sm-auto col-form-label"
-      >Full text search:</label
-    >
-    <div class="col-xs-3 col-sm-auto">
-      <input
-        id="table-complete-search"
-        type="text"
-        class="form-control"
-        name="searchTerm"
-        [(ngModel)]="searchTerm"
-      />
-    </div>
-  </div>
-  <div style="overflow-x: auto; max-width: 100%">
-    <table class="table table-striped table-hover table-bordered">
-      <thead>
-        <tr>
-          <th scope="col">#</th>
-          <th scope="col">Country</th>
-          <th scope="col">Area</th>
-          <th scope="col">Population</th>
-          <th scope="col">Published Year</th>
-          <th scope="col">Edition</th>
-          <th scope="col">Description</th>
-          <th scope="col">Total Copies</th>
-          <th scope="col">Available Copies</th>
-          <th scope="col">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (book of filteredBooks(); track book.id) {
-          <tr>
-            <th scope="row">{{ book.id }}</th>
-            <td>{{ book.title }}</td>
-            <td>{{ book.author }}</td>
-            <td>{{ book.publisher }}</td>
-            <td>{{ book.publishedYear }}</td>
-            <td>{{ book.edition }}</td>
-            <td>{{ book.description }}</td>
-            <td>{{ book.totalCopies }}</td>
-            <td>{{ book.availableCopies }}</td>
-            <td>
-              <div class="d-flex gap-2">
-                <button type="button" class="btn btn-link text-primary p-0" routerLink="/library/book/{{ book.id }}">
-                  <i class="fa fa-eye"></i>
-                </button>
-                <button type="button" class="btn btn-link text-danger p-0" (click)="deleteBook(book.id)">
-                  <i class="fa fa-trash"></i>
-                </button>
-              </div>
-            </td>
-          </tr>
-        } @empty {
-          <tr>
-            <td colspan="9" style="text-align: center">No books found</td>
-          </tr>
+<div class="card shadow-sm">
+  <div class="card-body">
+    <!-- Search Section -->
+    <div class="row mb-4">
+      <div class="col-md-6">
+        <div class="input-group">
+          <span class="input-group-text bg-white">
+            <i class="fa fa-search text-muted"></i>
+          </span>
+          <input
+            id="table-complete-search"
+            type="text"
+            class="form-control"
+            placeholder="Search by title, author, publisher, or description..."
+            name="searchTerm"
+            [(ngModel)]="searchTerm"
+            [disabled]="isLoading()"
+          />
+        </div>
+      </div>
+      <div class="col-md-6 text-end">
+        @if (!isLoading()) {
+          <span class="badge bg-primary fs-6">
+            {{ filteredBooks().length }} Books Found
+          </span>
         }
-      </tbody>
-    </table>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    @if (isLoading()) {
+      <div class="text-center py-5">
+        <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <h5 class="text-muted">Loading books...</h5>
+        <p class="text-muted small">Please wait while we fetch the library collection</p>
+      </div>
+    } @else {
+      <!-- Table Section -->
+      <div class="table-responsive">
+        <table class="table table-hover align-middle">
+          <thead class="table-light">
+            <tr>
+              <th scope="col" style="width: 50px">#</th>
+              <th scope="col">Title</th>
+              <th scope="col">Author</th>
+              <th scope="col">Publisher</th>
+              <th scope="col" style="width: 100px">Year</th>
+              <th scope="col" style="width: 80px">Edition</th>
+              <th scope="col" style="width: 300px">Description</th>
+              <th scope="col" class="text-center" style="width: 100px">Total</th>
+              <th scope="col" class="text-center" style="width: 100px">Available</th>
+              <th scope="col" class="text-center" style="width: 100px">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (book of filteredBooks(); track book.id) {
+              <tr class="book-row">
+                <th scope="row" class="text-muted">{{ book.id }}</th>
+                <td class="fw-semibold">{{ book.title }}</td>
+                <td>{{ book.author }}</td>
+                <td>{{ book.publisher }}</td>
+                <td>{{ book.published_year }}</td>
+                <td>{{ book.edition }}</td>
+                <td>
+                  <div class="text-truncate" style="max-width: 300px" [title]="book.description">
+                    {{ book.description }}
+                  </div>
+                </td>
+                <td class="text-center">
+                  <span class="badge bg-info">{{ book.total_copies }}</span>
+                </td>
+                <td class="text-center">
+                  <span class="badge" [class.bg-success]="book.available_copies > 0" [class.bg-danger]="book.available_copies === 0">
+                    {{ book.available_copies }}
+                  </span>
+                </td>
+                <td>
+                  <div class="d-flex gap-2 justify-content-center">
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-outline-primary"
+                      routerLink="/library/book/{{ book.id }}"
+                      title="View Details">
+                      <i class="fa fa-eye"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-outline-danger"
+                      (click)="deleteBook(book.id)"
+                      title="Delete Book">
+                      <i class="fa fa-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="10" class="text-center py-5">
+                  <i class="fa fa-book fa-3x text-muted mb-3"></i>
+                  <p class="text-muted mb-0">No books found</p>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
   </div>
-</form>
+</div>
