@@ -24,6 +24,7 @@ return new class extends Migration
              * Time boundaries
              */
             $table->dateTime('starts_at');
+            $table->dateTime('ends_at')->nullable();
 
             /**
              * Session lifecycle
