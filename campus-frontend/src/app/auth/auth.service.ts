@@ -23,15 +23,19 @@ export class AuthService {
       .post(`${this.API_URL}/auth/login`, { email, password })
       .pipe(
         tap((response: any) => {
+          console.log('Login response:', response); // ✅ Debug log
+
           const token = response?.data?.token;
           const user = response?.data?.user;
 
           if (token) {
             localStorage.setItem(this.TOKEN_KEY, token);
+            console.log('Token saved'); // ✅ Debug log
           }
 
           if (user) {
             localStorage.setItem(this.USER_KEY, JSON.stringify(user));
+            console.log('User saved'); // ✅ Debug log
           }
         })
       );

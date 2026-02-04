@@ -97,3 +97,18 @@
   border-radius: 0.5rem;
   padding: 1rem;
 }
+
+.course-card {
+  transition: all 0.3s ease;
+  background: #f8f9fa;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    background: white;
+  }
+
+  h6 {
+    color: #667eea;
+  }
+}

@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class EmailVerificationController extends Controller
 {
@@ -28,25 +29,44 @@ class EmailVerificationController extends Controller
 
         $hashedToken = hash('sha256', $validated['token']);
 
+        Log::info('Verification attempt', [
+            'token' => $validated['token'],
+            'hashed' => $hashedToken,
+        ]);
+
         $user = User::where('verification_token', $hashedToken)
             ->where('verification_token_expires_at', '>', now())
             ->first();
 
         if (!$user) {
+            Log::error('User not found with token');
             return response()->json([
                 'message' => 'Invalid or expired verification token.',
             ], Response::HTTP_BAD_REQUEST);
         }
 
+        Log::info('User found', ['email' => $user->email]);
+
         if ($user->verifyEmail($validated['token'])) {
+            // ✅ Refresh the model to get the latest data from database
+            $user->refresh();
+
+            Log::info('Email verified successfully', [
+                'email' => $user->email,
+                'email_verified_at' => $user->email_verified_at,
+            ]);
+
             return response()->json([
                 'message' => 'Email verified successfully. Please set your new password.',
                 'data' => [
                     'email' => $user->email,
                     'must_reset_password' => $user->must_reset_password,
+                    'email_verified_at' => $user->email_verified_at,
                 ],
             ]);
         }
+
+        Log::error('Email verification failed');
 
         return response()->json([
             'message' => 'Email verification failed.',

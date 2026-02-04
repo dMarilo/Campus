@@ -1,0 +1,72 @@
+<div class="verify-email-container">
+  <div class="verify-email-background">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+  </div>
+
+  <div class="container">
+    <div class="row min-vh-100 align-items-center justify-content-center">
+      <div class="col-lg-5 col-md-7 col-sm-9">
+        <div class="verify-card">
+
+          <!-- Verifying State -->
+          @if (isVerifying) {
+            <div class="text-center">
+              <div class="spinner-wrapper mb-4">
+                <div class="spinner-border text-primary" style="width: 4rem; height: 4rem;">
+                  <span class="visually-hidden">Verifying...</span>
+                </div>
+              </div>
+              <h2 class="mb-3">Verifying Your Email</h2>
+              <p class="text-muted">Please wait while we verify your email address...</p>
+            </div>
+          }
+
+          <!-- Success State -->
+          @if (!isVerifying && isSuccess) {
+            <div class="text-center">
+              <div class="success-icon mb-4">
+                <i class="fa fa-check-circle fa-5x text-success"></i>
+              </div>
+              <h2 class="mb-3">Email Verified!</h2>
+              <p class="text-muted mb-4">
+                Your email has been successfully verified. You will be redirected to set your password...
+              </p>
+              <div class="spinner-border spinner-border-sm text-primary" role="status">
+                <span class="visually-hidden">Redirecting...</span>
+              </div>
+            </div>
+          }
+
+          <!-- Error State -->
+          @if (!isVerifying && !isSuccess) {
+            <div class="text-center">
+              <div class="error-icon mb-4">
+                <i class="fa fa-exclamation-circle fa-5x text-danger"></i>
+              </div>
+              <h2 class="mb-3">Verification Failed</h2>
+              <div class="alert alert-danger">
+                {{ errorMessage }}
+              </div>
+              <div class="d-grid gap-2">
+                <button
+                  class="btn btn-primary btn-lg"
+                  routerLink="/login">
+                  <i class="fa fa-arrow-left me-2"></i>
+                  Back to Login
+                </button>
+              </div>
+            </div>
+          }
+
+        </div>
+
+        <div class="text-center mt-4">
+          <p class="text-white small mb-0">
+            © 2026 Campus System. All rights reserved.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

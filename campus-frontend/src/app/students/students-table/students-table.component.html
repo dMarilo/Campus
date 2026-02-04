@@ -1,0 +1,114 @@
+<div class="card shadow-sm">
+  <div class="card-body">
+    <!-- Search and Filter Section -->
+    <div class="row mb-4">
+      <div class="col-md-6">
+        <div class="input-group">
+          <span class="input-group-text bg-white">
+            <i class="fa fa-search text-muted"></i>
+          </span>
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Search by name, email, or index number..."
+            name="searchTerm"
+            [(ngModel)]="searchTerm"
+            [disabled]="isLoading()"
+          />
+        </div>
+      </div>
+      <div class="col-md-3">
+        <select class="form-select" [(ngModel)]="filterYear" (change)="applyFilters()">
+          <option value="">All Years</option>
+          <option value="1">Year 1</option>
+          <option value="2">Year 2</option>
+          <option value="3">Year 3</option>
+          <option value="4">Year 4</option>
+        </select>
+      </div>
+      <div class="col-md-3 text-end">
+        @if (!isLoading()) {
+          <span class="badge bg-primary fs-6">
+            {{ filteredStudents().length }} Students Found
+          </span>
+        }
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    @if (isLoading()) {
+      <div class="text-center py-5">
+        <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <h5 class="text-muted">Loading students...</h5>
+        <p class="text-muted small">Please wait while we fetch student records</p>
+      </div>
+    } @else {
+      <!-- Table Section -->
+      <div class="table-responsive">
+        <table class="table table-hover align-middle">
+          <thead class="table-light">
+            <tr>
+              <th scope="col" style="width: 50px">#</th>
+              <th scope="col">Index Number</th>
+              <th scope="col">Name</th>
+              <th scope="col">Email</th>
+              <th scope="col">Phone</th>
+              <th scope="col" class="text-center" style="width: 100px">Year</th>
+              <th scope="col" class="text-center" style="width: 120px">Status</th>
+              <th scope="col" class="text-center" style="width: 100px">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (student of filteredStudents(); track student.id) {
+              <tr class="student-row">
+                <th scope="row" class="text-muted">{{ student.id }}</th>
+                <td class="fw-semibold">{{ student.index_number }}</td>
+                <td>{{ student.first_name }} {{ student.last_name }}</td>
+                <td>{{ student.email }}</td>
+                <td>{{ student.phone || 'N/A' }}</td>
+                <td class="text-center">
+                  <span class="badge bg-info">Year {{ student.year_of_study }}</span>
+                </td>
+                <td class="text-center">
+                  <span
+                    class="badge"
+                    [class.bg-success]="student.status === 'active'"
+                    [class.bg-warning]="student.status === 'pending'"
+                    [class.bg-danger]="student.status === 'inactive'">
+                    {{ student.status }}
+                  </span>
+                </td>
+                <td>
+                  <div class="d-flex gap-2 justify-content-center">
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-outline-primary"
+                      routerLink="/students/{{ student.id }}"
+                      title="View Details">
+                      <i class="fa fa-eye"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-outline-secondary"
+                      title="Edit Student">
+                      <i class="fa fa-edit"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="8" class="text-center py-5">
+                  <i class="fa fa-user-graduate fa-3x text-muted mb-3"></i>
+                  <p class="text-muted mb-0">No students found</p>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</div>

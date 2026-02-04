@@ -15,10 +15,8 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        // ✅ ENABLE CORS (THIS WAS MISSING)
         $middleware->append(HandleCors::class);
 
-        // ✅ Keep your custom middleware aliases
         $middleware->alias([
             'role' => RoleMiddleware::class,
             'admin' => EnsureUserIsAdmin::class

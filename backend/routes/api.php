@@ -51,8 +51,8 @@ Route::post('/auth/login', [AuthController::class, 'login']);
     });
 
 
-Route::prefix('email')->group(function () {
-    Route::post('/verify', [EmailVerificationController::class, 'verify']);
+Route::prefix('auth')->group(function () {
+    Route::post('/verify-email', [EmailVerificationController::class, 'verify']);
     Route::post('/set-password', [EmailVerificationController::class, 'setPassword']);
     Route::post('/resend', [EmailVerificationController::class, 'resend']);
 });
@@ -125,7 +125,7 @@ Route::middleware('auth:api')->group(function () {
         Route::post('/return', [BorrowingController::class, 'return']);
 
         // Get borrowing history of the authenticated student
-        Route::get('/student', [BorrowingController::class, 'studentBorrowings']);
+        Route::post('/student', [BorrowingController::class, 'studentBorrowings']);
 
         // Get all currently active borrowings
         Route::get('/active', [BorrowingController::class, 'allBorrowed']);
@@ -244,6 +244,10 @@ Route::middleware('auth:api')->group(function () {
 
         // Get only active courses
         Route::get('/active', [CourseController::class, 'active']);
+
+        // ✅ NEW: Get all courses that use a specific book
+        // GET http://localhost:8000/api/courses/book/1
+        Route::get('/book/{bookId}', [CourseController::class, 'byBook']);
 
         // Get course by ID
         Route::get('/{id}', [CourseController::class, 'showById']);

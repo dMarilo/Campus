@@ -41,6 +41,7 @@ class User extends Authenticatable implements JWTSubject
     public const TYPE_STUDENT = 'student';
 
     // User statuses
+    public const STATUS_PENDING  = 'pending';
     public const STATUS_ACTIVE   = 'active';
     public const STATUS_INACTIVE = 'inactive';
     public const STATUS_BLOCKED  = 'blocked';
@@ -144,11 +145,13 @@ class User extends Authenticatable implements JWTSubject
             return false;
         }
 
-        $this->update([
-            'email_verified_at' => now(),
-            'verification_token' => null,
-            'verification_token_expires_at' => null,
-        ]);
+        // ✅ Make sure we're actually updating and saving
+        $this->email_verified_at = now();
+        $this->verification_token = null;
+        $this->verification_token_expires_at = null;
+        // Don't change status here - it should stay 'pending' until password is set
+
+        $this->save(); // ✅ Explicitly call save()
 
         return true;
     }

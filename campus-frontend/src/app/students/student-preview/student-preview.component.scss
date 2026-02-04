@@ -1,0 +1,178 @@
+.student-preview-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.profile-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 1rem 1rem 0 0;
+  position: relative;
+  padding-top: 2rem;
+}
+
+.profile-avatar {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.avatar-img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  border: 5px solid white;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.stat-card {
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  }
+}
+
+.detail-item {
+  .detail-label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #6c757d;
+    margin-bottom: 0.5rem;
+  }
+
+  .detail-value {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #212529;
+    margin-bottom: 0;
+  }
+}
+
+.card {
+  border-radius: 1rem;
+  overflow: hidden;
+
+  &.shadow-lg {
+    box-shadow: 0 1rem 3rem rgba(0,0,0,0.175) !important;
+  }
+}
+
+.btn {
+  border-radius: 0.5rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  }
+}
+
+// Borrowing History Styles
+.borrowings-list {
+  max-height: 600px;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+
+    &:hover {
+      background: #555;
+    }
+  }
+}
+
+.borrowing-card {
+  padding: 1.25rem;
+  background: #f8f9fa;
+  border-radius: 0.75rem;
+  border-left: 4px solid #667eea;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transform: translateX(5px);
+  }
+
+  h5 {
+    color: #212529;
+    font-size: 1.1rem;
+  }
+
+  .badge {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.75rem;
+    border-radius: 0.5rem;
+  }
+}
+
+.btn-group {
+  .btn {
+    border-radius: 0.5rem;
+
+    &:first-child {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+
+    &:last-child {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+  }
+}
+
+// Status-specific styles
+.borrowing-card {
+  &.overdue {
+    border-left-color: #dc3545;
+  }
+
+  &.returned {
+    border-left-color: #28a745;
+    opacity: 0.8;
+  }
+}
+
+// Responsive
+@media (max-width: 991px) {
+  .avatar-img {
+    width: 120px;
+    height: 120px;
+  }
+
+  .borrowings-list {
+    max-height: 400px;
+  }
+
+  .borrowing-card {
+    .row {
+      text-align: left !important;
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .btn-group {
+    width: 100%;
+    margin-top: 0.5rem;
+
+    .btn {
+      font-size: 0.85rem;
+    }
+  }
+}
