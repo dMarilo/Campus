@@ -35,7 +35,8 @@ class WelcomeUserNotification extends Notification implements ShouldQueue
      */
     public function toMail(object $notifiable): MailMessage
     {
-        $verificationUrl = config('app.frontend_url') . '/verify-email?token=' . $this->verificationToken;
+        // Use env() directly instead of config()
+        $verificationUrl = env('FRONTEND_URL', 'http://localhost:4200') . '/verify-email?token=' . $this->verificationToken;
 
         return (new MailMessage)
             ->subject('Welcome - Verify Your Account')

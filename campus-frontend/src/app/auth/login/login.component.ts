@@ -29,8 +29,8 @@ export class LoginComponent {
       password: ['', [Validators.required]],
     });
 
-    // Get return URL from route parameters or default to '/home'
-    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/home';
+    // Get return URL from route parameters or default to '/dashboard'
+    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
   }
 
   authenticate(): void {
@@ -45,15 +45,18 @@ export class LoginComponent {
     const { email, password } = this.formGroup.value;
 
     this.auth.login(email!, password!).subscribe({
-      next: () => {
-        this.router.navigateByUrl(this.returnUrl, { replaceUrl: true });
+      next: (response) => {
+        console.log('Login successful:', response); // ✅ Debug log
+        this.isLoading = false;
+
+        // Navigate immediately
+        this.router.navigateByUrl(this.returnUrl, { replaceUrl: true }).then(() => {
+          console.log('Navigation complete'); // ✅ Debug log
+        });
       },
       error: (error) => {
         console.error('Login error:', error);
         this.errorMessage = error.error?.message || 'Invalid email or password';
-        this.isLoading = false;
-      },
-      complete: () => {
         this.isLoading = false;
       },
     });

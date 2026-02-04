@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Course extends Model
 {
@@ -92,6 +93,24 @@ class Course extends Model
     {
         return $this->newQuery()
             ->where('status', 'active')
+            ->get();
+    }
+
+    /**
+     * Find all courses that require a specific book.
+     *
+     * @param int $bookId
+     * @return \Illuminate\Support\Collection
+     */
+    public function findByBookId(int $bookId)
+    {
+        return $this->newQuery()
+            ->whereHas('books', function ($query) use ($bookId) {
+                $query->where('books.id', $bookId);
+            })
+            ->with(['books' => function ($query) use ($bookId) {
+                $query->where('books.id', $bookId);
+            }])
             ->get();
     }
 }

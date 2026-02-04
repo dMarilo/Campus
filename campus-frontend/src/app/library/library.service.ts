@@ -90,4 +90,9 @@ export class LibraryService {
     return this.http.get<BooksResponse>(`${environment.apiBaseUrl}/books/course/${courseId}`)
       .pipe(map(response => response.data));
   }
+
+  getCoursesByBook(bookId: number): Observable<any[]> {
+    return this.http.get<any>(`${environment.apiBaseUrl}/courses/book/${bookId}`)
+      .pipe(map(response => response.data));
+  }
 }

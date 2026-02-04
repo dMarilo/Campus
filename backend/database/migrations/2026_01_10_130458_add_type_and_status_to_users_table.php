@@ -10,16 +10,16 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
 
-            $table->string('type')
+            $table->enum('type', ['admin', 'professor', 'student'])
                 ->after('password')
                 ->index()
-                ->comment('system, admin, staff, client');
+                ->comment('admin, professor, student');
 
-            $table->string('status')
+            $table->enum('status', ['pending', 'active', 'inactive', 'blocked'])
                 ->after('type')
-                ->default('active')
+                ->default('pending')  // ✅ Changed from 'active' to 'pending'
                 ->index()
-                ->comment('active, inactive, blocked');
+                ->comment('pending, active, inactive, blocked');
         });
     }
 

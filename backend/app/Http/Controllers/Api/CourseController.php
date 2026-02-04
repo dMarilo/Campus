@@ -141,4 +141,19 @@ class CourseController extends Controller
             'message' => 'Course deleted successfully'
         ]);
     }
+
+    /**
+     * Get all courses that use a specific book.
+     *
+     * @param int $bookId
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function byBook(int $bookId)
+    {
+        $course = new \App\Models\Course();
+
+        return response()->json([
+            'data' => $course->findByBookId($bookId),
+        ]);
+    }
 }
