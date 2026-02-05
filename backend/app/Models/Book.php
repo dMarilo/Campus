@@ -177,6 +177,27 @@ class Book extends Model
             ->whereHas('courses', function ($query) use ($courseId) {
                 $query->where('courses.id', $courseId);
             })
-            ->get();
+            ->with(['courses' => function ($query) use ($courseId) {
+                $query->where('courses.id', $courseId)
+                    ->withPivot('mandatory');
+            }])
+            ->get()
+            ->map(function ($book) {
+                // Flatten the structure to include pivot data at the root level
+                $courseData = $book->courses->first();
+                return [
+                    'id' => $book->id,
+                    'book_id' => $book->id,
+                    'title' => $book->title,
+                    'author' => $book->author,
+                    'publisher' => $book->publisher,
+                    'published_year' => $book->published_year,
+                    'edition' => $book->edition,
+                    'description' => $book->description,
+                    'total_copies' => $book->total_copies,
+                    'available_copies' => $book->available_copies,
+                    'mandatory' => $courseData ? $courseData->pivot->mandatory : true,
+                ];
+            });
     }
 }

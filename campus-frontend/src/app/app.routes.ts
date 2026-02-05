@@ -16,6 +16,9 @@ import { LabrirayTable } from './library/labriray-table/labriray-table';
 import { StudentsLayout } from './students/students-layout/students-layout.component';
 import { StudentsTable } from './students/students-table/students-table.component';
 import { StudentPreview } from './students/student-preview/student-preview.component';
+import { CoursesLayout } from './courses/courses-layout/courses-layout.component';
+import { CoursesPreview } from './courses/courses-preview/courses-preview.component';
+import { CoursesTable } from './courses/courses-table/courses-table.component';
 
 export const routes: Routes = [
   // Public routes (NO authentication required)
@@ -66,6 +69,20 @@ export const routes: Routes = [
           { path: '', component: StudentsTable },
            { path: ':id', component: StudentPreview },
         ],
+      },
+      {
+        path: 'courses',
+        component: CoursesLayout,
+        children: [
+          {
+            path: '',
+            component: CoursesTable
+          },
+          {
+            path: ':id',
+            component: CoursesPreview
+          }
+        ]
       },
       { path: 'dorm', component: LabrirayLayout },
       { path: 'classes', component: LabrirayLayout },

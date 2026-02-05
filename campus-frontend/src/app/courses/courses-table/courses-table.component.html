@@ -1,0 +1,232 @@
+<div class="card shadow-sm">
+  <div class="card-body">
+    <!-- Search and Filter Section -->
+    <div class="row mb-4">
+      <div class="col-md-4">
+        <div class="input-group">
+          <span class="input-group-text bg-white">
+            <i class="fa fa-search text-muted"></i>
+          </span>
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Search by name, code, or description..."
+            name="searchTerm"
+            [(ngModel)]="searchTerm"
+            [disabled]="isLoading()"
+          />
+        </div>
+      </div>
+      <div class="col-md-2">
+        <select class="form-select" [(ngModel)]="filterDepartment" (change)="applyFilters()">
+          <option value="">All Departments</option>
+          <option value="Electrical Engineering">Electrical Engineering</option>
+          <option value="Computer Science">Computer Science</option>
+          <option value="Telecommunications">Telecommunications</option>
+          <option value="Mathematics">Mathematics</option>
+          <option value="Physics">Physics</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <select class="form-select" [(ngModel)]="filterLevel" (change)="applyFilters()">
+          <option value="">All Levels</option>
+          <option value="bachelor">Bachelor</option>
+          <option value="master">Master</option>
+          <option value="phd">PhD</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <!-- View Mode Toggle -->
+        <div class="btn-group w-100" role="group">
+          <button
+            type="button"
+            class="btn"
+            [class.btn-primary]="viewMode() === 'table'"
+            [class.btn-outline-primary]="viewMode() !== 'table'"
+            (click)="toggleViewMode('table')"
+            title="Table View">
+            <i class="fa fa-table"></i>
+          </button>
+          <button
+            type="button"
+            class="btn"
+            [class.btn-primary]="viewMode() === 'cards'"
+            [class.btn-outline-primary]="viewMode() !== 'cards'"
+            (click)="toggleViewMode('cards')"
+            title="Card View">
+            <i class="fa fa-th-large"></i>
+          </button>
+        </div>
+      </div>
+      <div class="col-md-2 text-end">
+        @if (!isLoading()) {
+          <span class="badge bg-primary fs-6">
+            {{ filteredCourses().length }} Courses
+          </span>
+        }
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    @if (isLoading()) {
+      <div class="text-center py-5">
+        <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <h5 class="text-muted">Loading courses...</h5>
+        <p class="text-muted small">Please wait while we fetch course records</p>
+      </div>
+    } @else {
+      <!-- Table View -->
+      @if (viewMode() === 'table') {
+        <div class="table-responsive">
+          <table class="table table-hover align-middle">
+            <thead class="table-light">
+              <tr>
+                <th scope="col" style="width: 50px">#</th>
+                <th scope="col">Code</th>
+                <th scope="col">Name</th>
+                <th scope="col">Department</th>
+                <th scope="col" class="text-center" style="width: 100px">ECTS</th>
+                <th scope="col" class="text-center" style="width: 100px">Level</th>
+                <th scope="col" class="text-center" style="width: 120px">Mandatory</th>
+                <th scope="col" class="text-center" style="width: 120px">Status</th>
+                <th scope="col" class="text-center" style="width: 100px">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (course of filteredCourses(); track course.id) {
+                <tr class="course-row">
+                  <th scope="row" class="text-muted">{{ course.id }}</th>
+                  <td class="fw-semibold">{{ course.code }}</td>
+                  <td>{{ course.name }}</td>
+                  <td>{{ course.department }}</td>
+                  <td class="text-center">
+                    <span class="badge bg-secondary">{{ course.ects }}</span>
+                  </td>
+                  <td class="text-center">
+                    <span
+                      class="badge"
+                      [class.bg-primary]="course.level === 'bachelor'"
+                      [class.bg-info]="course.level === 'master'"
+                      [class.bg-warning]="course.level === 'phd'">
+                      {{ course.level }}
+                    </span>
+                  </td>
+                  <td class="text-center">
+                    <i
+                      [class]="course.mandatory ? 'fa fa-check text-success' : 'fa fa-times text-muted'"
+                    ></i>
+                  </td>
+                  <td class="text-center">
+                    <span
+                      class="badge"
+                      [class.bg-success]="course.status === 'active'"
+                      [class.bg-danger]="course.status === 'inactive'">
+                      {{ course.status }}
+                    </span>
+                  </td>
+                  <td>
+                    <div class="d-flex gap-2 justify-content-center">
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-outline-primary"
+                        routerLink="/courses/{{ course.id }}"
+                        title="View Details">
+                        <i class="fa fa-eye"></i>
+                      </button>
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-outline-secondary"
+                        title="Edit Course">
+                        <i class="fa fa-edit"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="9" class="text-center py-5">
+                    <i class="fa fa-graduation-cap fa-3x text-muted mb-3"></i>
+                    <p class="text-muted mb-0">No courses found</p>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+
+      <!-- Card View -->
+      @if (viewMode() === 'cards') {
+        <div class="row g-4">
+          @for (course of filteredCourses(); track course.id) {
+            <div class="col-md-6 col-lg-4">
+              <div class="course-card card h-100 shadow-sm">
+                <div class="card-header bg-gradient text-white">
+                  <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                      <h5 class="card-title mb-1 fw-bold">{{ course.code }}</h5>
+                      <p class="card-subtitle mb-0 opacity-75 small">{{ course.department }}</p>
+                    </div>
+                    <span
+                      class="badge"
+                      [class.bg-light]="course.status === 'active'"
+                      [class.bg-danger]="course.status === 'inactive'"
+                      [class.text-dark]="course.status === 'active'">
+                      {{ course.status }}
+                    </span>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <h6 class="fw-bold mb-3">{{ course.name }}</h6>
+                  <p class="text-muted small mb-3">{{ course.description }}</p>
+
+                  <div class="d-flex flex-wrap gap-2 mb-3">
+                    <span class="badge bg-secondary">
+                      <i class="fa fa-award me-1"></i>{{ course.ects }} ECTS
+                    </span>
+                    <span
+                      class="badge"
+                      [class.bg-primary]="course.level === 'bachelor'"
+                      [class.bg-info]="course.level === 'master'"
+                      [class.bg-warning]="course.level === 'phd'">
+                      {{ course.level }}
+                    </span>
+                    <span
+                      class="badge"
+                      [class.bg-success]="course.mandatory"
+                      [class.bg-secondary]="!course.mandatory">
+                      {{ course.mandatory ? 'Mandatory' : 'Optional' }}
+                    </span>
+                  </div>
+                </div>
+                <div class="card-footer bg-white border-top">
+                  <div class="d-flex gap-2">
+                    <button
+                      class="btn btn-sm btn-primary flex-grow-1"
+                      routerLink="/courses/{{ course.id }}">
+                      <i class="fa fa-eye me-1"></i>View Details
+                    </button>
+                    <button
+                      class="btn btn-sm btn-outline-secondary"
+                      title="Edit Course">
+                      <i class="fa fa-edit"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          } @empty {
+            <div class="col-12">
+              <div class="text-center py-5">
+                <i class="fa fa-graduation-cap fa-3x text-muted mb-3"></i>
+                <p class="text-muted mb-0">No courses found</p>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    }
+  </div>
+</div>
