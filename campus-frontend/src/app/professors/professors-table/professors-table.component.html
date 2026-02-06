@@ -1,0 +1,131 @@
+<div class="card shadow-sm">
+  <div class="card-body">
+    <!-- Search and Filter Section -->
+    <div class="row mb-4">
+      <div class="col-md-4">
+        <div class="input-group">
+          <span class="input-group-text bg-white">
+            <i class="fa fa-search text-muted"></i>
+          </span>
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Search by name, email, or code..."
+            name="searchTerm"
+            [(ngModel)]="searchTerm"
+            [disabled]="isLoading()"
+          />
+        </div>
+      </div>
+      <div class="col-md-3">
+        <select class="form-select" [(ngModel)]="filterDepartment" (change)="applyFilters()">
+          <option value="">All Departments</option>
+          @for (dept of departments(); track dept) {
+            <option [value]="dept">{{ dept }}</option>
+          }
+        </select>
+      </div>
+      <div class="col-md-3">
+        <select class="form-select" [(ngModel)]="filterEmployment" (change)="applyFilters()">
+          <option value="">All Employment Types</option>
+          <option value="full_time">Full Time</option>
+          <option value="part_time">Part Time</option>
+          <option value="external">External</option>
+        </select>
+      </div>
+      <div class="col-md-2 text-end">
+        @if (!isLoading()) {
+          <span class="badge bg-primary fs-6">
+            {{ filteredProfessors().length }} Professors
+          </span>
+        }
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    @if (isLoading()) {
+      <div class="text-center py-5">
+        <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <h5 class="text-muted">Loading professors...</h5>
+        <p class="text-muted small">Please wait while we fetch professor records</p>
+      </div>
+    } @else {
+      <!-- Table Section -->
+      <div class="table-responsive">
+        <table class="table table-hover align-middle">
+          <thead class="table-light">
+            <tr>
+              <th scope="col" style="width: 50px">#</th>
+              <th scope="col">Code</th>
+              <th scope="col">Name</th>
+              <th scope="col">Email</th>
+              <th scope="col">Department</th>
+              <th scope="col" class="text-center" style="width: 130px">Employment</th>
+              <th scope="col" class="text-center" style="width: 120px">Status</th>
+              <th scope="col" class="text-center" style="width: 100px">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (professor of filteredProfessors(); track professor.id) {
+              <tr class="professor-row">
+                <th scope="row" class="text-muted">{{ professor.id }}</th>
+                <td class="fw-semibold">{{ professor.code }}</td>
+                <td>
+                  @if (professor.academic_title) {
+                    <span class="text-muted">{{ professor.academic_title }}</span>
+                  }
+                  {{ professor.first_name }} {{ professor.last_name }}
+                </td>
+                <td>{{ professor.email }}</td>
+                <td>{{ professor.department }}</td>
+                <td class="text-center">
+                  <span
+                    class="badge"
+                    [class.bg-primary]="professor.employment_type === 'full_time'"
+                    [class.bg-info]="professor.employment_type === 'part_time'"
+                    [class.bg-secondary]="professor.employment_type === 'external'">
+                    {{ formatEmploymentType(professor.employment_type) }}
+                  </span>
+                </td>
+                <td class="text-center">
+                  <span
+                    class="badge"
+                    [class.bg-success]="professor.status === 'active'"
+                    [class.bg-danger]="professor.status === 'inactive'">
+                    {{ professor.status }}
+                  </span>
+                </td>
+                <td>
+                  <div class="d-flex gap-2 justify-content-center">
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-outline-primary"
+                      routerLink="/professors/{{ professor.id }}"
+                      title="View Details">
+                      <i class="fa fa-eye"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-outline-secondary"
+                      title="Edit Professor">
+                      <i class="fa fa-edit"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="8" class="text-center py-5">
+                  <i class="fa fa-chalkboard-teacher fa-3x text-muted mb-3"></i>
+                  <p class="text-muted mb-0">No professors found</p>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</div>

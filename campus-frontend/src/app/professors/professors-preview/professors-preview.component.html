@@ -1,0 +1,245 @@
+<div class="professor-preview-container">
+  <div class="container py-4">
+    <!-- Header with back button -->
+    <div class="mb-4">
+      <button class="btn btn-link text-decoration-none p-0" routerLink="/professors">
+        <i class="fa fa-arrow-left me-2"></i>
+        <span>Back to Professors</span>
+      </button>
+    </div>
+
+    @if (professor()) {
+      <!-- Main Professor Card -->
+      <div class="row g-4">
+        <!-- Left Column - Profile Card -->
+        <div class="col-lg-4">
+          <div class="card shadow-lg border-0 sticky-top" style="top: 20px;">
+            <!-- Profile Header -->
+            <div class="profile-header">
+              <div class="profile-avatar">
+                <img
+                  [src]="'https://ui-avatars.com/api/?name=' + professor()!.first_name + '+' + professor()!.last_name + '&size=200&background=667eea&color=fff&bold=true'"
+                  alt="Professor Avatar"
+                  class="avatar-img"
+                />
+              </div>
+              <div class="text-center text-white p-3">
+                <h3 class="mb-1 fw-bold">
+                  @if (professor()!.academic_title) {
+                    {{ professor()!.academic_title }}
+                  }
+                  {{ professor()!.first_name }} {{ professor()!.last_name }}
+                </h3>
+                <p class="mb-0 opacity-75">{{ professor()!.code }}</p>
+              </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="card-body">
+              <div class="row g-3 text-center mb-4">
+                <div class="col-6">
+                  <div class="stat-card bg-primary bg-opacity-10 rounded p-3">
+                    <div class="stat-icon text-primary mb-2">
+                      <i class="fa fa-building fa-2x"></i>
+                    </div>
+                    <h6 class="mb-0 fw-bold text-primary">{{ professor()!.department }}</h6>
+                    <small class="text-muted">Department</small>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="stat-card bg-info bg-opacity-10 rounded p-3">
+                    <div class="stat-icon text-info mb-2">
+                      <i class="fa fa-briefcase fa-2x"></i>
+                    </div>
+                    <h6 class="mb-0 fw-bold text-info">{{ formatEmploymentType(professor()!.employment_type) }}</h6>
+                    <small class="text-muted">Employment</small>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Status Badge -->
+              <div class="text-center mb-4">
+                <span
+                  class="badge px-3 py-2"
+                  [class.bg-success]="professor()!.status === 'active'"
+                  [class.bg-danger]="professor()!.status === 'inactive'">
+                  <i class="fa fa-circle me-1"></i>
+                  {{ professor()!.status | titlecase }}
+                </span>
+              </div>
+
+              <!-- Action Buttons -->
+              <div class="d-grid gap-2">
+                <button class="btn btn-primary btn-lg">
+                  <i class="fa fa-edit me-2"></i>Edit Professor
+                </button>
+                <button class="btn btn-outline-secondary">
+                  <i class="fa fa-envelope me-2"></i>Send Email
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column - Professor Details -->
+        <div class="col-lg-8">
+          <!-- Personal Information -->
+          <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+              <h4 class="mb-0 fw-bold">
+                <i class="fa fa-user text-primary me-2"></i>Personal Information
+              </h4>
+            </div>
+            <div class="card-body p-4">
+              <div class="row g-4">
+                <div class="col-md-6">
+                  <div class="detail-item">
+                    <label class="detail-label">First Name</label>
+                    <p class="detail-value">{{ professor()!.first_name }}</p>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="detail-item">
+                    <label class="detail-label">Last Name</label>
+                    <p class="detail-value">{{ professor()!.last_name }}</p>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="detail-item">
+                    <label class="detail-label">Academic Title</label>
+                    <p class="detail-value">{{ professor()!.academic_title || 'N/A' }}</p>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="detail-item">
+                    <label class="detail-label">Professor Code</label>
+                    <p class="detail-value">{{ professor()!.code }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Contact Information -->
+          <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+              <h4 class="mb-0 fw-bold">
+                <i class="fa fa-address-book text-primary me-2"></i>Contact Information
+              </h4>
+            </div>
+            <div class="card-body p-4">
+              <div class="row g-4">
+                <div class="col-md-6">
+                  <div class="detail-item">
+                    <label class="detail-label">Email</label>
+                    <p class="detail-value">
+                      <a [href]="'mailto:' + professor()!.email" class="text-decoration-none">
+                        {{ professor()!.email }}
+                      </a>
+                    </p>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="detail-item">
+                    <label class="detail-label">Phone</label>
+                    <p class="detail-value">{{ professor()!.phone || 'N/A' }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Academic & Employment Information -->
+          <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+              <h4 class="mb-0 fw-bold">
+                <i class="fa fa-graduation-cap text-primary me-2"></i>Academic & Employment
+              </h4>
+            </div>
+            <div class="card-body p-4">
+              <div class="row g-4">
+                <div class="col-md-6">
+                  <div class="detail-item">
+                    <label class="detail-label">Department</label>
+                    <p class="detail-value">{{ professor()!.department }}</p>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="detail-item">
+                    <label class="detail-label">Employment Type</label>
+                    <p class="detail-value">{{ formatEmploymentType(professor()!.employment_type) }}</p>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="detail-item">
+                    <label class="detail-label">Office Location</label>
+                    <p class="detail-value">{{ professor()!.office_location || 'N/A' }}</p>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="detail-item">
+                    <label class="detail-label">Office Hours</label>
+                    <p class="detail-value">{{ professor()!.office_hours || 'N/A' }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- System Information -->
+          @if (professor()!.created_at) {
+            <div class="card shadow-sm border-0">
+              <div class="card-header bg-white border-0 pt-4 px-4">
+                <h4 class="mb-0 fw-bold">
+                  <i class="fa fa-info-circle text-primary me-2"></i>System Information
+                </h4>
+              </div>
+              <div class="card-body p-4">
+                <div class="row g-4">
+                  <div class="col-md-6">
+                    <div class="detail-item">
+                      <label class="detail-label">Created At</label>
+                      <p class="detail-value">{{ professor()!.created_at | date:'medium' }}</p>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="detail-item">
+                      <label class="detail-label">Last Updated</label>
+                      <p class="detail-value">{{ professor()!.updated_at | date:'medium' }}</p>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="detail-item">
+                      <label class="detail-label">Professor ID</label>
+                      <p class="detail-value">#{{ professor()!.id }}</p>
+                    </div>
+                  </div>
+                  @if (professor()!.user_id) {
+                    <div class="col-md-6">
+                      <div class="detail-item">
+                        <label class="detail-label">User ID</label>
+                        <p class="detail-value">#{{ professor()!.user_id }}</p>
+                      </div>
+                    </div>
+                  }
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    } @else {
+      <!-- Professor Not Found -->
+      <div class="card shadow-sm border-0">
+        <div class="card-body text-center py-5">
+          <i class="fa fa-exclamation-triangle fa-4x text-warning mb-3"></i>
+          <h3>Professor Not Found</h3>
+          <p class="text-muted">The professor you're looking for doesn't exist.</p>
+          <button class="btn btn-primary" routerLink="/professors">
+            <i class="fa fa-arrow-left me-2"></i>Back to Professors
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+</div>
