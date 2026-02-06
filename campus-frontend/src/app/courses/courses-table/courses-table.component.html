@@ -163,44 +163,82 @@
           @for (course of filteredCourses(); track course.id) {
             <div class="col-md-6 col-lg-4">
               <div class="course-card card h-100 shadow-sm">
-                <div class="card-header bg-gradient text-white">
-                  <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                      <h5 class="card-title mb-1 fw-bold">{{ course.code }}</h5>
-                      <p class="card-subtitle mb-0 opacity-75 small">{{ course.department }}</p>
+                <div
+                  class="card-header-themed"
+                  [class.dept-cs]="course.department === 'Computer Science'"
+                  [class.dept-ee]="course.department === 'Electrical Engineering'"
+                  [class.dept-telecom]="course.department === 'Telecommunications'"
+                  [class.dept-math]="course.department === 'Mathematics'"
+                  [class.dept-physics]="course.department === 'Physics'"
+                  [class.dept-default]="
+                    course.department !== 'Computer Science' &&
+                    course.department !== 'Electrical Engineering' &&
+                    course.department !== 'Telecommunications' &&
+                    course.department !== 'Mathematics' &&
+                    course.department !== 'Physics'
+                  ">
+                  <!-- Background pattern -->
+                  <div class="header-pattern"></div>
+
+                  <!-- Department icon -->
+                  <div class="header-icon">
+                    <i class="fa"
+                      [class.fa-laptop-code]="course.department === 'Computer Science'"
+                      [class.fa-bolt]="course.department === 'Electrical Engineering'"
+                      [class.fa-satellite-dish]="course.department === 'Telecommunications'"
+                      [class.fa-square-root-alt]="course.department === 'Mathematics'"
+                      [class.fa-atom]="course.department === 'Physics'"
+                      [class.fa-graduation-cap]="
+                        course.department !== 'Computer Science' &&
+                        course.department !== 'Electrical Engineering' &&
+                        course.department !== 'Telecommunications' &&
+                        course.department !== 'Mathematics' &&
+                        course.department !== 'Physics'
+                      "></i>
+                  </div>
+
+                  <div class="header-content">
+                    <div class="d-flex justify-content-between align-items-start">
+                      <div>
+                        <span class="course-code">{{ course.code }}</span>
+                        <span class="dept-label">{{ course.department }}</span>
+                      </div>
+                      <span
+                        class="status-pill"
+                        [class.status-active]="course.status === 'active'"
+                        [class.status-inactive]="course.status === 'inactive'">
+                        {{ course.status }}
+                      </span>
                     </div>
-                    <span
-                      class="badge"
-                      [class.bg-light]="course.status === 'active'"
-                      [class.bg-danger]="course.status === 'inactive'"
-                      [class.text-dark]="course.status === 'active'">
-                      {{ course.status }}
-                    </span>
                   </div>
                 </div>
-                <div class="card-body">
-                  <h6 class="fw-bold mb-3">{{ course.name }}</h6>
-                  <p class="text-muted small mb-3">{{ course.description }}</p>
 
-                  <div class="d-flex flex-wrap gap-2 mb-3">
-                    <span class="badge bg-secondary">
+                <div class="card-body">
+                  <h6 class="fw-bold mb-2">{{ course.name }}</h6>
+                  <p class="text-muted small mb-3 course-desc">{{ course.description }}</p>
+
+                  <div class="d-flex flex-wrap gap-2 mb-0">
+                    <span class="info-chip">
                       <i class="fa fa-award me-1"></i>{{ course.ects }} ECTS
                     </span>
-                    <span
-                      class="badge"
-                      [class.bg-primary]="course.level === 'bachelor'"
-                      [class.bg-info]="course.level === 'master'"
-                      [class.bg-warning]="course.level === 'phd'">
-                      {{ course.level }}
+                    <span class="info-chip"
+                      [class.level-bachelor]="course.level === 'bachelor'"
+                      [class.level-master]="course.level === 'master'"
+                      [class.level-phd]="course.level === 'phd'">
+                      <i class="fa fa-graduation-cap me-1"></i>{{ course.level }}
                     </span>
-                    <span
-                      class="badge"
-                      [class.bg-success]="course.mandatory"
-                      [class.bg-secondary]="!course.mandatory">
-                      {{ course.mandatory ? 'Mandatory' : 'Optional' }}
-                    </span>
+                    @if (course.mandatory) {
+                      <span class="info-chip mandatory-chip">
+                        <i class="fa fa-star me-1"></i>Mandatory
+                      </span>
+                    } @else {
+                      <span class="info-chip optional-chip">
+                        Optional
+                      </span>
+                    }
                   </div>
                 </div>
+
                 <div class="card-footer bg-white border-top">
                   <div class="d-flex gap-2">
                     <button

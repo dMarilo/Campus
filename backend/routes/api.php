@@ -276,6 +276,10 @@ Route::middleware('auth:api')->group(function () {
         // Get all classes
         Route::get('/', [CourseClassController::class, 'index']);
 
+        // Get a single class by ID
+        Route::get('/{id}', [CourseClassController::class, 'show'])
+            ->where('id', '[0-9]+');
+
         // Get all students attending a specific class
         Route::get('/{classId}/students', [AttendanceController::class, 'studentsByClass']);
 
