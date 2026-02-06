@@ -22,6 +22,9 @@ import { CoursesTable } from './courses/courses-table/courses-table.component';
 import { ProfessorsLayout } from './professors/professors-layout/professors-layout.component';
 import { ProfessorsTable } from './professors/professors-table/professors-table.component';
 import { ProfessorsPreview } from './professors/professors-preview/professors-preview.component';
+import { ClassesLayout } from './classes/classes-layout/classes-layout.component';
+import { ClassesTable } from './classes/classes-table/classes-table.component';
+import { ClassesPreview } from './classes/classes-preview/classes-preview.component';
 
 export const routes: Routes = [
   // Public routes (NO authentication required)
@@ -88,7 +91,14 @@ export const routes: Routes = [
         ]
       },
       { path: 'dorm', component: LabrirayLayout },
-      { path: 'classes', component: LabrirayLayout },
+      {
+        path: 'classes',
+        component: ClassesLayout,
+        children: [
+          { path: '', component: ClassesTable },
+          { path: ':id', component: ClassesPreview },
+        ],
+      },
       { path: 'students', component: LabrirayLayout },
             {
         path: 'professors',

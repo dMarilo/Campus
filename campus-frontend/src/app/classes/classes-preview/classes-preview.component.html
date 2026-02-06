@@ -1,0 +1,421 @@
+<div class="class-preview-container">
+  <div class="container py-4">
+    <!-- Header with back button -->
+    <div class="mb-4">
+      <button class="btn btn-link text-decoration-none p-0" routerLink="/classes">
+        <i class="fa fa-arrow-left me-2"></i>
+        <span>Back to Classes</span>
+      </button>
+    </div>
+
+    @if (courseClass()) {
+      <div class="row g-4">
+        <!-- Left Column - Class Info Card -->
+        <div class="col-lg-4">
+          <div class="card shadow-lg border-0 sticky-top" style="top: 20px;">
+            <!-- Class Header -->
+            <div class="class-header">
+              <div class="class-icon">
+                <i class="fa fa-chalkboard fa-4x text-white"></i>
+              </div>
+              <div class="text-center text-white p-3">
+                <h3 class="mb-1 fw-bold">{{ courseClass()!.course?.name }}</h3>
+                <p class="mb-0 opacity-75">{{ courseClass()!.course?.code }}</p>
+              </div>
+            </div>
+
+            <div class="card-body">
+              <!-- Quick Stats -->
+              <div class="row g-3 text-center mb-4">
+                <div class="col-6">
+                  <div class="stat-card bg-primary bg-opacity-10 rounded p-3">
+                    <div class="stat-icon text-primary mb-2">
+                      <i class="fa fa-chalkboard-teacher fa-2x"></i>
+                    </div>
+                    <h4 class="mb-0 fw-bold text-primary">{{ professors().length }}</h4>
+                    <small class="text-muted">Professors</small>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="stat-card bg-info bg-opacity-10 rounded p-3">
+                    <div class="stat-icon text-info mb-2">
+                      <i class="fa fa-user-graduate fa-2x"></i>
+                    </div>
+                    <h4 class="mb-0 fw-bold text-info">{{ students().length }}</h4>
+                    <small class="text-muted">Students</small>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Class Details -->
+              <div class="detail-list mb-4">
+                <div class="detail-row">
+                  <span class="detail-label">Department</span>
+                  <span class="detail-value">{{ courseClass()!.course?.department }}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">Semester</span>
+                  <span class="detail-value">{{ courseClass()!.semester?.name || 'Semester ' + courseClass()!.semester_id }}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">Academic Year</span>
+                  <span class="detail-value">{{ courseClass()!.academic_year?.name || 'Year ' + courseClass()!.academic_year_id }}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">Iteration</span>
+                  <span class="detail-value">{{ courseClass()!.iteration }}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">ECTS</span>
+                  <span class="detail-value">{{ courseClass()!.course?.ects }}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">Level</span>
+                  <span class="detail-value text-capitalize">{{ courseClass()!.course?.level }}</span>
+                </div>
+              </div>
+
+              <!-- Status Badges -->
+              <div class="text-center mb-4">
+                <span
+                  class="badge px-3 py-2 me-2"
+                  [class.bg-success]="courseClass()!.status === 'active'"
+                  [class.bg-info]="courseClass()!.status === 'planned'"
+                  [class.bg-secondary]="courseClass()!.status === 'completed'">
+                  <i class="fa fa-circle me-1"></i>
+                  {{ courseClass()!.status | titlecase }}
+                </span>
+                @if (courseClass()!.course?.mandatory) {
+                  <span class="badge px-3 py-2 bg-warning">
+                    <i class="fa fa-star me-1"></i>Mandatory
+                  </span>
+                }
+              </div>
+
+              <!-- Action Buttons -->
+              <div class="d-grid gap-2">
+                <button
+                  class="btn btn-primary btn-lg"
+                  routerLink="/courses/{{ courseClass()!.course_id }}">
+                  <i class="fa fa-graduation-cap me-2"></i>View Course
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column - Professors & Students -->
+        <div class="col-lg-8">
+
+          <!-- Tab Navigation -->
+          <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white border-0 pt-3 px-4">
+              <div class="d-flex gap-2">
+                <button
+                  type="button"
+                  class="btn"
+                  [class.btn-primary]="activeTab() === 'professors'"
+                  [class.btn-outline-primary]="activeTab() !== 'professors'"
+                  (click)="switchTab('professors')">
+                  <i class="fa fa-chalkboard-teacher me-2"></i>
+                  Professors
+                  <span class="badge bg-white text-primary ms-2">{{ professors().length }}</span>
+                </button>
+                <button
+                  type="button"
+                  class="btn"
+                  [class.btn-primary]="activeTab() === 'students'"
+                  [class.btn-outline-primary]="activeTab() !== 'students'"
+                  (click)="switchTab('students')">
+                  <i class="fa fa-user-graduate me-2"></i>
+                  Students
+                  <span class="badge bg-white text-primary ms-2">{{ students().length }}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Professors Tab -->
+          @if (activeTab() === 'professors') {
+            <div class="card shadow-sm border-0 mb-4">
+              <div class="card-header bg-white border-0 pt-4 px-4">
+                <h4 class="mb-0 fw-bold">
+                  <i class="fa fa-chalkboard-teacher text-primary me-2"></i>Teaching Staff
+                </h4>
+              </div>
+              <div class="card-body p-4">
+                @if (loadingProfessors()) {
+                  <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                      <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-3 text-muted">Loading professors...</p>
+                  </div>
+                } @else if (professors().length === 0) {
+                  <div class="text-center py-5">
+                    <i class="fa fa-chalkboard-teacher fa-3x text-muted mb-3"></i>
+                    <p class="text-muted mb-0">No professors assigned to this class</p>
+                  </div>
+                } @else {
+                  <div class="people-list">
+                    @for (professor of professors(); track professor.id) {
+                      <div
+                        class="person-card mb-3"
+                        [class.active]="selectedProfessor()?.id === professor.id"
+                        (click)="selectProfessor(professor)">
+                        <div class="row align-items-center">
+                          <div class="col-auto">
+                            <img
+                              [src]="'https://ui-avatars.com/api/?name=' + professor.first_name + '+' + professor.last_name + '&size=48&background=667eea&color=fff&bold=true'"
+                              alt="Avatar"
+                              class="person-avatar"
+                            />
+                          </div>
+                          <div class="col">
+                            <h6 class="mb-0 fw-bold">
+                              @if (professor.academic_title) {
+                                <span class="text-muted fw-normal">{{ professor.academic_title }}</span>
+                              }
+                              {{ professor.first_name }} {{ professor.last_name }}
+                            </h6>
+                            <small class="text-muted">
+                              {{ professor.department }}
+                              <span class="mx-1">•</span>
+                              {{ professor.email }}
+                            </small>
+                          </div>
+                          <div class="col-auto">
+                            <span
+                              class="badge"
+                              [class.bg-success]="professor.status === 'active'"
+                              [class.bg-danger]="professor.status === 'inactive'">
+                              {{ professor.status }}
+                            </span>
+                          </div>
+                          <div class="col-auto">
+                            <i class="fa fa-chevron-right text-muted"></i>
+                          </div>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+
+            <!-- Professor Detail Panel -->
+            @if (selectedProfessor()) {
+              <div class="card shadow-sm border-0 mb-4 professor-detail-card">
+                <div class="card-header bg-white border-0 pt-4 px-4">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0 fw-bold">
+                      <i class="fa fa-user text-primary me-2"></i>Professor Details
+                    </h4>
+                    <button class="btn btn-sm btn-outline-secondary" (click)="closeProfessorDetail()">
+                      <i class="fa fa-times"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="card-body p-4">
+                  <div class="text-center mb-4">
+                    <img
+                      [src]="'https://ui-avatars.com/api/?name=' + selectedProfessor()!.first_name + '+' + selectedProfessor()!.last_name + '&size=100&background=667eea&color=fff&bold=true'"
+                      alt="Avatar"
+                      class="rounded-circle mb-3"
+                      style="width: 100px; height: 100px;"
+                    />
+                    <h4 class="fw-bold mb-0">
+                      @if (selectedProfessor()!.academic_title) {
+                        {{ selectedProfessor()!.academic_title }}
+                      }
+                      {{ selectedProfessor()!.first_name }} {{ selectedProfessor()!.last_name }}
+                    </h4>
+                    <p class="text-muted">{{ selectedProfessor()!.code }}</p>
+                  </div>
+
+                  <div class="row g-4">
+                    <div class="col-md-6">
+                      <div class="detail-item">
+                        <label class="detail-label">Email</label>
+                        <p class="detail-value">
+                          <a [href]="'mailto:' + selectedProfessor()!.email" class="text-decoration-none">
+                            {{ selectedProfessor()!.email }}
+                          </a>
+                        </p>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="detail-item">
+                        <label class="detail-label">Phone</label>
+                        <p class="detail-value">{{ selectedProfessor()!.phone || 'N/A' }}</p>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="detail-item">
+                        <label class="detail-label">Department</label>
+                        <p class="detail-value">{{ selectedProfessor()!.department }}</p>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="detail-item">
+                        <label class="detail-label">Employment Type</label>
+                        <p class="detail-value">{{ formatEmploymentType(selectedProfessor()!.employment_type) }}</p>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="detail-item">
+                        <label class="detail-label">Office Location</label>
+                        <p class="detail-value">{{ selectedProfessor()!.office_location || 'N/A' }}</p>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="detail-item">
+                        <label class="detail-label">Office Hours</label>
+                        <p class="detail-value">{{ selectedProfessor()!.office_hours || 'N/A' }}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="text-center mt-4">
+                    <button
+                      class="btn btn-primary"
+                      routerLink="/professors/{{ selectedProfessor()!.id }}">
+                      <i class="fa fa-external-link-alt me-2"></i>View Full Profile
+                    </button>
+                  </div>
+                </div>
+              </div>
+            }
+          }
+
+          <!-- Students Tab -->
+          @if (activeTab() === 'students') {
+            <div class="card shadow-sm border-0 mb-4">
+              <div class="card-header bg-white border-0 pt-4 px-4">
+                <h4 class="mb-0 fw-bold">
+                  <i class="fa fa-user-graduate text-primary me-2"></i>Enrolled Students
+                </h4>
+              </div>
+              <div class="card-body p-4">
+                @if (loadingStudents()) {
+                  <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                      <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-3 text-muted">Loading students...</p>
+                  </div>
+                } @else if (students().length === 0) {
+                  <div class="text-center py-5">
+                    <i class="fa fa-user-graduate fa-3x text-muted mb-3"></i>
+                    <p class="text-muted mb-0">No students enrolled in this class</p>
+                  </div>
+                } @else {
+                  <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                      <thead class="table-light">
+                        <tr>
+                          <th scope="col" style="width: 50px">#</th>
+                          <th scope="col">Name</th>
+                          <th scope="col">Index Number</th>
+                          <th scope="col">Email</th>
+                          <th scope="col" class="text-center">Year</th>
+                          <th scope="col" class="text-center">Status</th>
+                          <th scope="col" class="text-center" style="width: 80px">View</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @for (student of students(); track student.id; let i = $index) {
+                          <tr>
+                            <th scope="row" class="text-muted">{{ i + 1 }}</th>
+                            <td>
+                              <div class="d-flex align-items-center gap-2">
+                                <img
+                                  [src]="'https://ui-avatars.com/api/?name=' + student.first_name + '+' + student.last_name + '&size=32&background=17a2b8&color=fff&bold=true'"
+                                  alt="Avatar"
+                                  class="rounded-circle"
+                                  style="width: 32px; height: 32px;"
+                                />
+                                <span>{{ student.first_name }} {{ student.last_name }}</span>
+                              </div>
+                            </td>
+                            <td class="fw-semibold">{{ student.index_number }}</td>
+                            <td>{{ student.email }}</td>
+                            <td class="text-center">
+                              <span class="badge bg-info">Year {{ student.year_of_study }}</span>
+                            </td>
+                            <td class="text-center">
+                              <span
+                                class="badge"
+                                [class.bg-success]="student.status === 'active'"
+                                [class.bg-warning]="student.status === 'pending'"
+                                [class.bg-danger]="student.status === 'inactive'">
+                                {{ student.status }}
+                              </span>
+                            </td>
+                            <td class="text-center">
+                              <button
+                                class="btn btn-sm btn-outline-primary"
+                                routerLink="/students/{{ student.id }}"
+                                title="View Student">
+                                <i class="fa fa-eye"></i>
+                              </button>
+                            </td>
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+
+          <!-- System Information -->
+          @if (courseClass()!.created_at) {
+            <div class="card shadow-sm border-0">
+              <div class="card-header bg-white border-0 pt-4 px-4">
+                <h4 class="mb-0 fw-bold">
+                  <i class="fa fa-database text-primary me-2"></i>System Information
+                </h4>
+              </div>
+              <div class="card-body p-4">
+                <div class="row g-4">
+                  <div class="col-md-6">
+                    <div class="detail-item">
+                      <label class="detail-label">Created At</label>
+                      <p class="detail-value">{{ courseClass()!.created_at | date:'medium' }}</p>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="detail-item">
+                      <label class="detail-label">Last Updated</label>
+                      <p class="detail-value">{{ courseClass()!.updated_at | date:'medium' }}</p>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="detail-item">
+                      <label class="detail-label">Class ID</label>
+                      <p class="detail-value">#{{ courseClass()!.id }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    } @else {
+      <!-- Class Not Found -->
+      <div class="card shadow-sm border-0">
+        <div class="card-body text-center py-5">
+          <i class="fa fa-exclamation-triangle fa-4x text-warning mb-3"></i>
+          <h3>Class Not Found</h3>
+          <p class="text-muted">The class you're looking for doesn't exist.</p>
+          <button class="btn btn-primary" routerLink="/classes">
+            <i class="fa fa-arrow-left me-2"></i>Back to Classes
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+</div>
