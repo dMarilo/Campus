@@ -1,85 +1,230 @@
-<div class="terminal-container">
+<div class="terminal-shell">
+  <!-- Ambient scanline overlay -->
+  <div class="scanlines"></div>
 
-  <h2 class="terminal-title">Classroom Session Terminal</h2>
-
-  <!-- SUCCESS STATE -->
-  @if (sessionData) {
-    <div class="success-box">
-      <h3>✅ Session Started</h3>
-      <!-- CLASS (COURSE NAME) -->
-      <div class="info-row">
-        <span>Class:</span>
-        <strong>
-          {{ sessionData.course_class?.course?.name }}
-        </strong>
-      </div>
-      <!-- CLASSROOM -->
-      <div class="info-row">
-        <span>Classroom:</span>
-        <strong>
-          {{ sessionData.classroom?.name }}
-        </strong>
-      </div>
-      <!-- PROFESSOR -->
-      <div class="info-row">
-        <span>Professor:</span>
-        <strong>
-          {{ sessionData.professor?.full_name || '—' }}
-        </strong>
-      </div>
-      <!-- START TIME -->
-      <div class="info-row">
-        <span>Started at:</span>
-        <strong>
-          {{ sessionData.started_at | date:'shortTime' }}
-        </strong>
-      </div>
-      <!-- END SESSION BUTTON -->
-      <div class="actions-row">
-        <button
-          type="button"
-          class="end-session-btn"
-          (click)="endSession()"
-          [disabled]="loading"
-          >
-          ⛔ {{ loading ? 'Ending…' : 'End Session' }}
-        </button>
-      </div>
+  <!-- Top bar — clock + classroom ID -->
+  <header class="top-bar">
+    <div class="top-bar-left">
+      <span class="pulse-dot"></span>
+      <span class="terminal-id">TERMINAL {{ classroomId }}</span>
     </div>
-  }
+    <div class="top-bar-center">
+      <span class="clock">{{ currentTime | date:'HH:mm:ss' }}</span>
+    </div>
+    <div class="top-bar-right">
+      <span class="date-display">{{ currentTime | date:'EEEE, MMMM d, y' }}</span>
+    </div>
+  </header>
 
-  <!-- FORM -->
-  @if (!sessionData) {
-    <form
-      [formGroup]="form"
-      (ngSubmit)="startSession()"
-      class="terminal-form"
-      >
-      <div class="form-group">
-        <label>Professor Code</label>
-        <input
-          type="text"
-          formControlName="professor_code"
-          autocomplete="off"
-          />
-      </div>
-      <div class="form-group">
-        <label>PIN</label>
-        <input
-          type="password"
-          formControlName="class_pin"
-          autocomplete="off"
-          />
-      </div>
-      <button type="submit" [disabled]="loading">
-        {{ loading ? 'Starting…' : 'Start Session' }}
-      </button>
-      @if (errorMessage) {
-        <div class="error-box">
-          ❌ {{ errorMessage }}
+  <main class="terminal-main">
+
+    <!-- ==================== LOGIN STATE ==================== -->
+    @if (!sessionData) {
+      <div class="login-panel">
+        <div class="login-glyph">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+          </svg>
         </div>
-      }
-    </form>
-  }
+        <h1 class="login-title">Start Class Session</h1>
+        <p class="login-subtitle">Authenticate to begin recording attendance</p>
 
+        <form
+          [formGroup]="form"
+          (ngSubmit)="startSession()"
+          class="login-form"
+        >
+          <div class="field">
+            <label for="prof-code">Professor Code</label>
+            <div class="input-wrap">
+              <svg class="field-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+              <input
+                id="prof-code"
+                type="text"
+                formControlName="professor_code"
+                placeholder="e.g. PROF2024001"
+                autocomplete="off"
+                spellcheck="false"
+              />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="class-pin">Session PIN</label>
+            <div class="input-wrap">
+              <svg class="field-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+              <input
+                id="class-pin"
+                type="password"
+                formControlName="class_pin"
+                placeholder="••••••"
+                autocomplete="off"
+              />
+            </div>
+          </div>
+
+          <button class="btn-start" type="submit" [disabled]="loading">
+            @if (loading) {
+              <span class="spinner"></span>
+              <span>Authenticating…</span>
+            } @else {
+              <span>Start Session</span>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"/>
+                <polyline points="12 5 19 12 12 19"/>
+              </svg>
+            }
+          </button>
+
+          @if (errorMessage) {
+            <div class="error-banner">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+              <span>{{ errorMessage }}</span>
+            </div>
+          }
+        </form>
+      </div>
+    }
+
+    <!-- ==================== SESSION ACTIVE STATE ==================== -->
+    @if (sessionData) {
+      <div class="session-wrapper">
+
+        <!-- Left: Session info panel -->
+        <aside class="session-info-panel">
+          <div class="session-status-badge">
+            <span class="live-dot"></span>
+            LIVE SESSION
+          </div>
+
+          <h1 class="course-name">{{ sessionData.course_class?.course?.name }}</h1>
+
+          <div class="meta-grid">
+            <div class="meta-card">
+              <span class="meta-label">Classroom</span>
+              <span class="meta-value">{{ sessionData.classroom?.name }}</span>
+            </div>
+            <div class="meta-card">
+              <span class="meta-label">Professor</span>
+              <span class="meta-value">{{ sessionData.professor?.full_name || '—' }}</span>
+            </div>
+            <div class="meta-card">
+              <span class="meta-label">Started</span>
+              <span class="meta-value">{{ sessionData.started_at | date:'shortTime' }}</span>
+            </div>
+            <div class="meta-card">
+              <span class="meta-label">Duration</span>
+              <span class="meta-value mono">{{ elapsedTime }}</span>
+            </div>
+          </div>
+
+          <!-- Quick Stats -->
+          <div class="stats-row">
+            <div class="stat-block present">
+              <span class="stat-number">{{ presentCount }}</span>
+              <span class="stat-label">Present</span>
+            </div>
+            <div class="stat-block absent">
+              <span class="stat-number">{{ absentCount }}</span>
+              <span class="stat-label">Absent</span>
+            </div>
+            <div class="stat-block total">
+              <span class="stat-number">{{ totalStudents }}</span>
+              <span class="stat-label">Enrolled</span>
+            </div>
+          </div>
+
+          <!-- Attendance progress bar -->
+          <div class="attendance-bar-wrap">
+            <div class="attendance-bar">
+              <div
+                class="attendance-bar-fill"
+                [style.width.%]="totalStudents ? (presentCount / totalStudents) * 100 : 0"
+              ></div>
+            </div>
+            <span class="attendance-pct">
+              {{ totalStudents ? ((presentCount / totalStudents) * 100 | number:'1.0-0') : 0 }}% attendance
+            </span>
+          </div>
+
+          <button
+            type="button"
+            class="btn-end"
+            (click)="endSession()"
+            [disabled]="loading"
+          >
+            @if (loading) {
+              <span class="spinner spinner-light"></span>
+              <span>Ending…</span>
+            } @else {
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+              </svg>
+              <span>End Session</span>
+            }
+          </button>
+        </aside>
+
+        <!-- Right: Attendance roster -->
+        <section class="attendance-panel">
+          <div class="attendance-header">
+            <h2>Attendance Roster</h2>
+            <div class="roster-search-wrap">
+              <svg class="roster-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input
+                type="text"
+                class="roster-search"
+                placeholder="Search students…"
+                [(ngModel)]="studentSearch"
+              />
+            </div>
+          </div>
+
+          <div class="roster-list">
+            @for (student of filteredStudents(); track student.id) {
+              <div class="roster-row" [class.checked-in]="student.checked_in">
+                <div class="roster-avatar">
+                  {{ student.first_name?.charAt(0) }}{{ student.last_name?.charAt(0) }}
+                </div>
+                <div class="roster-info">
+                  <span class="roster-name">{{ student.first_name }} {{ student.last_name }}</span>
+                  <span class="roster-index">{{ student.index_number }}</span>
+                </div>
+                <div class="roster-status">
+                  @if (student.checked_in) {
+                    <span class="status-chip present">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                      Present
+                    </span>
+                    <span class="check-in-time">{{ student.checked_in_at | date:'shortTime' }}</span>
+                  } @else {
+                    <span class="status-chip absent">Absent</span>
+                  }
+                </div>
+              </div>
+            } @empty {
+              <div class="roster-empty">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.4">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                  <circle cx="9" cy="7" r="4"/>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+                <p>No students to display</p>
+              </div>
+            }
+          </div>
+        </section>
+
+      </div>
+    }
+
+  </main>
 </div>

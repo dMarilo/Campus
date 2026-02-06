@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\ClassroomController;
 use App\Http\Controllers\Api\EmailVerificationController;
 use App\Http\Controllers\Api\TeachingController;
 use App\Http\Controllers\Api\ExamController;
+use App\Http\Controllers\Api\ProfessorController;
 
 /*
 |--------------------------------------------------------------------------
@@ -315,6 +316,44 @@ Route::middleware('auth:api')->group(function () {
         // Get student by ID
         // GET http://localhost:8000/api/students/1
         Route::get('/{id}', [StudentController::class, 'show']);
+    });
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Professors
+    |--------------------------------------------------------------------------
+    | Manage professor records and information.
+    */
+
+    Route::prefix('professors')->group(function () {
+
+        // Get all professors
+        Route::get('/', [ProfessorController::class, 'index']);
+
+        // Search professors by name
+        Route::get('/search', [ProfessorController::class, 'search']);
+
+        // Get only active professors
+        Route::get('/active', [ProfessorController::class, 'active']);
+
+        // Get professor by code
+        Route::get('/code/{code}', [ProfessorController::class, 'showByCode']);
+
+        // Get professors by department
+        Route::get('/department/{department}', [ProfessorController::class, 'showByDepartment']);
+
+        // Get professor by ID
+        Route::get('/{id}', [ProfessorController::class, 'show']);
+
+        // Create a professor
+        Route::post('/', [ProfessorController::class, 'store']);
+
+        // Update a professor
+        Route::put('/{id}', [ProfessorController::class, 'update']);
+
+        // Delete a professor
+        Route::delete('/{id}', [ProfessorController::class, 'destroy']);
     });
 
     /*

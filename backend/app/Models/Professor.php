@@ -36,9 +36,6 @@ class Professor extends Model
 
     /**
      * The attributes that are mass assignable.
-     *
-     * These fields describe the academic and
-     * administrative profile of a professor.
      */
     protected $fillable = [
         'user_id',
@@ -79,6 +76,118 @@ class Professor extends Model
     public function teaching()
     {
         return $this->hasMany(Teaching::class);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | CRUD Methods
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Retrieve all professors.
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getAllProfessors()
+    {
+        return self::all();
+    }
+
+    /**
+     * Retrieve a professor by ID.
+     *
+     * @param int $id
+     * @return \App\Models\Professor
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     */
+    public function getProfessorById(int $id): Professor
+    {
+        return self::findOrFail($id);
+    }
+
+    /**
+     * Retrieve a professor by their unique code.
+     *
+     * @param string $code
+     * @return \App\Models\Professor
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     */
+    public function getProfessorByCode(string $code): Professor
+    {
+        return self::where('code', $code)->firstOrFail();
+    }
+
+    /**
+     * Search professors by name (partial match).
+     *
+     * @param string $searchTerm
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function searchProfessorsByName(string $searchTerm)
+    {
+        return self::where('first_name', 'LIKE', "%{$searchTerm}%")
+            ->orWhere('last_name', 'LIKE', "%{$searchTerm}%")
+            ->get();
+    }
+
+    /**
+     * Retrieve professors by department.
+     *
+     * @param string $department
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getProfessorsByDepartment(string $department)
+    {
+        return self::where('department', $department)->get();
+    }
+
+    /**
+     * Retrieve only active professors.
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getActiveProfessors()
+    {
+        return self::where('status', self::STATUS_ACTIVE)->get();
+    }
+
+    /**
+     * Create and store a new professor.
+     *
+     * @param array $data
+     * @return \App\Models\Professor
+     */
+    public function loadProfessor(array $data): Professor
+    {
+        return self::create($data);
+    }
+
+    /**
+     * Update an existing professor.
+     *
+     * @param int   $id
+     * @param array $data
+     * @return \App\Models\Professor
+     */
+    public function updateProfessor(int $id, array $data): Professor
+    {
+        $professor = self::findOrFail($id);
+        $professor->update($data);
+        return $professor->fresh();
+    }
+
+    /**
+     * Delete a professor.
+     *
+     * @param int $id
+     * @return bool|null
+     */
+    public function deleteProfessor(int $id)
+    {
+        return self::findOrFail($id)->delete();
     }
 
     /*

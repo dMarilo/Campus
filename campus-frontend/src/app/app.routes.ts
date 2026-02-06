@@ -19,6 +19,9 @@ import { StudentPreview } from './students/student-preview/student-preview.compo
 import { CoursesLayout } from './courses/courses-layout/courses-layout.component';
 import { CoursesPreview } from './courses/courses-preview/courses-preview.component';
 import { CoursesTable } from './courses/courses-table/courses-table.component';
+import { ProfessorsLayout } from './professors/professors-layout/professors-layout.component';
+import { ProfessorsTable } from './professors/professors-table/professors-table.component';
+import { ProfessorsPreview } from './professors/professors-preview/professors-preview.component';
 
 export const routes: Routes = [
   // Public routes (NO authentication required)
@@ -87,7 +90,14 @@ export const routes: Routes = [
       { path: 'dorm', component: LabrirayLayout },
       { path: 'classes', component: LabrirayLayout },
       { path: 'students', component: LabrirayLayout },
-      { path: 'professors', component: LabrirayLayout },
+            {
+        path: 'professors',
+        component: ProfessorsLayout,
+        children: [
+          { path: '', component: ProfessorsTable },
+          { path: ':id', component: ProfessorsPreview },
+        ],
+      },
       { path: 'exams', component: LabrirayLayout },
     ],
   },
