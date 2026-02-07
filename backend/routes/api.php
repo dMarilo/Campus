@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\ClassroomController;
 use App\Http\Controllers\Api\EmailVerificationController;
 use App\Http\Controllers\Api\TeachingController;
 use App\Http\Controllers\Api\ExamController;
+use App\Http\Controllers\Api\ExamResultController;
 use App\Http\Controllers\Api\ProfessorController;
 
 /*
@@ -43,14 +44,12 @@ Route::get('/health', function () {
 */
 
 Route::post('/auth/login', [AuthController::class, 'login']);
-//Route::post('/users', [UserController::class, 'store']);
 
-    Route::prefix('classrooms')->group(function () {
-        Route::post('/{classroom}/start-session',[ClassroomController::class, 'startSession']);
-        Route::post('/{classroom}/end-session',[ClassroomController::class, 'endSession']);
-        Route::post('/{classroom}/check-in',[ClassroomController::class, 'studentCheckIn']);
-    });
-
+Route::prefix('classrooms')->group(function () {
+    Route::post('/{classroom}/start-session',[ClassroomController::class, 'startSession']);
+    Route::post('/{classroom}/end-session',[ClassroomController::class, 'endSession']);
+    Route::post('/{classroom}/check-in',[ClassroomController::class, 'studentCheckIn']);
+});
 
 Route::prefix('auth')->group(function () {
     Route::post('/verify-email', [EmailVerificationController::class, 'verify']);
@@ -67,14 +66,15 @@ Route::prefix('auth')->group(function () {
 
 Route::middleware('auth:api')->group(function () {
 
-
     Route::post('/auth/logout', [AuthController::class, 'logout']);
     Route::post('/auth/refresh', [AuthController::class, 'refresh']);
+    Route::get('/profile', [UserController::class, 'profile']);
 
     // Admin-only routes
     Route::middleware('admin')->group(function () {
         Route::post('/users', [UserController::class, 'store']);
     });
+
     /*
     |--------------------------------------------------------------------------
     | Books / Library
@@ -83,30 +83,12 @@ Route::middleware('auth:api')->group(function () {
     */
 
     Route::prefix('books')->group(function () {
-
-        // Search books
-        // GET http://localhost:8000/api/books/search?q=electronics
         Route::get('/search', [LibraryController::class, 'search']);
-
-        // Get all books
-        // GET http://localhost:8000/api/books
         Route::get('/', [LibraryController::class, 'index']);
-
-        // Get a single book by ID
-        // GET http://localhost:8000/api/books/1
         Route::get('/{id}', [LibraryController::class, 'show']);
-
-        // Create a new book
         Route::post('/', [LibraryController::class, 'store']);
-
-        // Update an existing book
         Route::put('/{id}', [LibraryController::class, 'update']);
-
-        // Delete a book
         Route::delete('/{id}', [LibraryController::class, 'destroy']);
-
-        // Get all books required for a specific course
-        // GET http://localhost:8000/api/books/course/1
         Route::get('/course/{courseId}', [LibraryController::class, 'byCourse']);
     });
 
@@ -118,17 +100,9 @@ Route::middleware('auth:api')->group(function () {
     */
 
     Route::prefix('borrowings')->group(function () {
-
-        // Borrow a book
         Route::post('/borrow', [BorrowingController::class, 'borrow']);
-
-        // Return a borrowed book
         Route::post('/return', [BorrowingController::class, 'return']);
-
-        // Get borrowing history of the authenticated student
         Route::post('/student', [BorrowingController::class, 'studentBorrowings']);
-
-        // Get all currently active borrowings
         Route::get('/active', [BorrowingController::class, 'allBorrowed']);
     });
 
@@ -140,29 +114,13 @@ Route::middleware('auth:api')->group(function () {
     */
 
     Route::prefix('dorms')->group(function () {
-
-        // Get all dorms
         Route::get('/', [DormController::class, 'getAllDorms']);
-
-        // Search dorms by criteria
         Route::get('/search', [DormController::class, 'searchDorms']);
-
-        // Get total capacity of a dorm
         Route::get('/capacity/{id}', [DormController::class, 'getDormCapacity']);
-
-        // Get number of rooms in a dorm
         Route::get('/rooms/{id}', [DormController::class, 'getDormRoomCount']);
-
-        // Get dorm by ID
         Route::get('/{id}', [DormController::class, 'getDormById']);
-
-        // Create a new dorm
         Route::post('/load', [DormController::class, 'loadDorm']);
-
-        // Update an existing dorm
         Route::put('/update/{id}', [DormController::class, 'updateDorm']);
-
-        // Delete a dorm
         Route::delete('/delete/{id}', [DormController::class, 'deleteDorm']);
     });
 
@@ -174,29 +132,13 @@ Route::middleware('auth:api')->group(function () {
     */
 
     Route::prefix('rooms')->group(function () {
-
-        // Get all rooms
         Route::get('/', [RoomController::class, 'getAllRooms']);
-
-        // Get all rooms in a specific dorm
         Route::get('/dorm/{dormId}', [RoomController::class, 'getRoomsByDormId']);
-
-        // Get room capacity
         Route::get('/capacity/{id}', [RoomController::class, 'getRoomCapacity']);
-
-        // Search rooms by criteria
         Route::get('/search', [RoomController::class, 'searchRooms']);
-
-        // Get room by ID
         Route::get('/{id}', [RoomController::class, 'getRoomById']);
-
-        // Create a new room
         Route::post('/load', [RoomController::class, 'loadRoom']);
-
-        // Update a room
         Route::put('/update/{id}', [RoomController::class, 'updateRoom']);
-
-        // Delete a room
         Route::delete('/delete/{id}', [RoomController::class, 'deleteRoom']);
     });
 
@@ -208,20 +150,10 @@ Route::middleware('auth:api')->group(function () {
     */
 
     Route::prefix('buildings')->group(function () {
-
-        // Get all buildings
         Route::get('/', [BuildingController::class, 'index']);
-
-        // Get building by code
         Route::get('/{code}', [BuildingController::class, 'showByCode']);
-
-        // Create a building
         Route::post('/', [BuildingController::class, 'store']);
-
-        // Update a building
         Route::put('/{id}', [BuildingController::class, 'update']);
-
-        // Delete a building
         Route::delete('/{id}', [BuildingController::class, 'destroy']);
     });
 
@@ -233,33 +165,14 @@ Route::middleware('auth:api')->group(function () {
     */
 
     Route::prefix('courses')->group(function () {
-
-        // Get all courses
         Route::get('/', [CourseController::class, 'index']);
-
-        // Get course by code
         Route::get('/code/{code}', [CourseController::class, 'showByCode']);
-
-        // Get courses by department
         Route::get('/department/{department}', [CourseController::class, 'showByDepartment']);
-
-        // Get only active courses
         Route::get('/active', [CourseController::class, 'active']);
-
-        // ✅ NEW: Get all courses that use a specific book
-        // GET http://localhost:8000/api/courses/book/1
         Route::get('/book/{bookId}', [CourseController::class, 'byBook']);
-
-        // Get course by ID
         Route::get('/{id}', [CourseController::class, 'showById']);
-
-        // Create a course
         Route::post('/', [CourseController::class, 'store']);
-
-        // Update a course
         Route::put('/{id}', [CourseController::class, 'update']);
-
-        // Delete a course
         Route::delete('/{id}', [CourseController::class, 'destroy']);
     });
 
@@ -272,29 +185,19 @@ Route::middleware('auth:api')->group(function () {
     */
 
     Route::prefix('classes')->group(function () {
-
-        // Get all classes
         Route::get('/', [CourseClassController::class, 'index']);
-
-        // Get a single class by ID
         Route::get('/{id}', [CourseClassController::class, 'show'])
             ->where('id', '[0-9]+');
-
-        // Get all students attending a specific class
         Route::get('/{classId}/students', [AttendanceController::class, 'studentsByClass']);
-
-        // Get all classes attended by a specific student
         Route::get('/students/{studentId}/classes', [AttendanceController::class, 'classesByStudent']);
-
-        // Get all professors teaching a specific class
         Route::get('/{classId}/professors', [TeachingController::class, 'professorsByClass']);
-
-        // Get all classes taught by a specific professor
         Route::get('/professors/{professorId}/classes', [TeachingController::class, 'classesByProfessor']);
 
+        // Exam-related routes for classes
+        Route::get('/{classId}/exams', [ExamController::class, 'examsByClass']);
         Route::get('/{classId}/exams/dates', [ExamController::class, 'examDatesByClass']);
+        Route::get('/{classId}/exam-results', [ExamResultController::class, 'classResults']);
     });
-
 
     /*
     |--------------------------------------------------------------------------
@@ -304,24 +207,17 @@ Route::middleware('auth:api')->group(function () {
     */
 
     Route::prefix('students')->group(function () {
-
-        // Get all students
-        // GET http://localhost:8000/api/students
         Route::get('/', [StudentController::class, 'index']);
-
-        // Get student by code
-        // GET http://localhost:8000/api/students/code/STU2024001
         Route::get('/code/{code}', [StudentController::class, 'showByCode']);
-
-        // Get students by year of study
-        // GET http://localhost:8000/api/students/year/3
         Route::get('/year/{year}', [StudentController::class, 'showByYear']);
-
-        // Get student by ID
-        // GET http://localhost:8000/api/students/1
         Route::get('/{id}', [StudentController::class, 'show']);
-    });
 
+        // Exam-related routes for students
+        Route::get('/{studentId}/exams', [ExamController::class, 'examsByStudent']);
+        Route::get('/{studentId}/exams/upcoming', [ExamController::class, 'upcomingExamsByStudent']);
+        Route::get('/{studentId}/exam-results', [ExamResultController::class, 'studentResults']);
+        Route::get('/{studentId}/exam-results/passed', [ExamResultController::class, 'passedResults']);
+    });
 
     /*
     |--------------------------------------------------------------------------
@@ -331,47 +227,67 @@ Route::middleware('auth:api')->group(function () {
     */
 
     Route::prefix('professors')->group(function () {
-
-        // Get all professors
         Route::get('/', [ProfessorController::class, 'index']);
-
-        // Search professors by name
         Route::get('/search', [ProfessorController::class, 'search']);
-
-        // Get only active professors
         Route::get('/active', [ProfessorController::class, 'active']);
-
-        // Get professor by code
         Route::get('/code/{code}', [ProfessorController::class, 'showByCode']);
-
-        // Get professors by department
         Route::get('/department/{department}', [ProfessorController::class, 'showByDepartment']);
-
-        // Get professor by ID
         Route::get('/{id}', [ProfessorController::class, 'show']);
-
-        // Create a professor
         Route::post('/', [ProfessorController::class, 'store']);
-
-        // Update a professor
         Route::put('/{id}', [ProfessorController::class, 'update']);
-
-        // Delete a professor
         Route::delete('/{id}', [ProfessorController::class, 'destroy']);
     });
 
     /*
     |--------------------------------------------------------------------------
-    | Classrooms
+    | Exams
     |--------------------------------------------------------------------------
-    | TODO
+    | Manage exams and exam registration.
     */
-    // Route::prefix('classrooms')->group(function () {
 
-    //     Route::get('/', [ClassroomController::class, 'index']);
-    //     Route::post('/{classroom}/start-session',[ClassroomController::class, 'startSession']);
-    // });
+    Route::prefix('exams')->group(function () {
+        // Get all exams
+        Route::get('/', [ExamController::class, 'index']);
 
+        // Get single exam
+        Route::get('/{id}', [ExamController::class, 'show']);
+
+        // Create exam
+        Route::post('/', [ExamController::class, 'store']);
+
+        // Update exam
+        Route::put('/{id}', [ExamController::class, 'update']);
+
+        // Delete exam
+        Route::delete('/{id}', [ExamController::class, 'destroy']);
+
+        // Register student for exam
+        Route::post('/register', [ExamController::class, 'registerStudent']);
+
+        // Get exam statistics
+        Route::get('/{id}/statistics', [ExamController::class, 'statistics']);
+
+        // Change exam status
+        Route::patch('/{id}/status', [ExamController::class, 'changeStatus']);
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Exam Results
+    |--------------------------------------------------------------------------
+    | Manage exam results and grading.
+    */
+
+    Route::prefix('exam-results')->group(function () {
+        // Get single exam result
+        Route::get('/{id}', [ExamResultController::class, 'show']);
+
+        // Grade/update exam result
+        Route::put('/{id}/grade', [ExamController::class, 'gradeExam']);
+
+        // Delete exam result
+        Route::delete('/{id}', [ExamResultController::class, 'destroy']);
+    });
 });
 
 /*
@@ -382,7 +298,6 @@ Route::middleware('auth:api')->group(function () {
 */
 
 Route::middleware(['auth:api', 'role:admin'])->group(function () {
-
     // Update student information (admin privileges required)
     Route::put('/admin/students/{id}', [StudentController::class, 'update']);
 });

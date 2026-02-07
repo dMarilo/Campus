@@ -25,6 +25,11 @@ import { ProfessorsPreview } from './professors/professors-preview/professors-pr
 import { ClassesLayout } from './classes/classes-layout/classes-layout.component';
 import { ClassesTable } from './classes/classes-table/classes-table.component';
 import { ClassesPreview } from './classes/classes-preview/classes-preview.component';
+import { ExamsLayout } from './exams/exams-layout/exams-layout.component';
+import { ExamsTable } from './exams/exams-table/exams-table.component';
+import { ExamsPreview } from './exams/exams-preview/exams-preview.component';
+import { ProfileLayout } from './profile/profile-layout/profile-layout.component';
+import { ProfilePreview } from './profile/profile-preview/profile-preview.component';
 
 export const routes: Routes = [
   // Public routes (NO authentication required)
@@ -108,7 +113,21 @@ export const routes: Routes = [
           { path: ':id', component: ProfessorsPreview },
         ],
       },
-      { path: 'exams', component: LabrirayLayout },
+      {
+        path: 'exams',
+        component: ExamsLayout,
+        children: [
+          { path: '', component: ExamsTable },
+          { path: ':id', component: ExamsPreview },
+        ],
+      },
+      {
+        path: 'profile',
+        component: ProfileLayout,
+        children: [
+          { path: '', component: ProfilePreview },
+        ],
+      },
     ],
   },
 

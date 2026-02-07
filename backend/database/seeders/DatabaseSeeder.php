@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             SemesterSeeder::class,
             CourseSeeder::class,
             ClassroomSeeder::class,
+            CourseBookSeeder::class,
         ]);
     }
 }

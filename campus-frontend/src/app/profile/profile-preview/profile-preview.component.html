@@ -1,0 +1,385 @@
+<div class="profile-preview-container">
+  <div class="container py-4">
+    <!-- Header with back button -->
+    <div class="mb-4">
+      <button class="btn btn-link text-decoration-none p-0" routerLink="/dashboard">
+        <i class="fa fa-arrow-left me-2"></i>
+        <span>Back to Dashboard</span>
+      </button>
+    </div>
+
+    @if (profile()) {
+      <!-- Main Profile Card -->
+      <div class="row g-4">
+        <!-- Left Column - Profile Card -->
+        <div class="col-lg-4">
+          <div class="card shadow-lg border-0 sticky-top" style="top: 20px;">
+            <!-- Profile Header -->
+            <div class="profile-header">
+              <div class="profile-avatar">
+                <img
+                  [src]="profile()!.avatar"
+                  [alt]="profile()!.name + ' Avatar'"
+                  class="avatar-img"
+                />
+              </div>
+              <div class="text-center text-white p-3">
+                <h3 class="mb-1 fw-bold">{{ profile()!.name }}</h3>
+                <p class="mb-0 opacity-75">{{ profile()!.email }}</p>
+              </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="card-body">
+              <!-- Student Stats -->
+              @if (studentProfile) {
+                <div class="row g-3 text-center mb-4">
+                  <div class="col-6">
+                    <div class="stat-card bg-primary bg-opacity-10 rounded p-3">
+                      <div class="stat-icon text-primary mb-2">
+                        <i class="fa fa-graduation-cap fa-2x"></i>
+                      </div>
+                      <h4 class="mb-0 fw-bold text-primary">Year {{ studentProfile.year_of_study }}</h4>
+                      <small class="text-muted">Year of Study</small>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="stat-card bg-success bg-opacity-10 rounded p-3">
+                      <div class="stat-icon text-success mb-2">
+                        <i class="fa fa-chart-line fa-2x"></i>
+                      </div>
+                      <h4 class="mb-0 fw-bold text-success">{{ studentProfile.gpa || 'N/A' }}</h4>
+                      <small class="text-muted">GPA</small>
+                    </div>
+                  </div>
+                </div>
+              }
+
+              <!-- Professor Stats -->
+              @if (professorProfile) {
+                <div class="row g-3 text-center mb-4">
+                  <div class="col-12">
+                    <div class="stat-card bg-primary bg-opacity-10 rounded p-3">
+                      <div class="stat-icon text-primary mb-2">
+                        <i class="fa fa-chalkboard-teacher fa-2x"></i>
+                      </div>
+                      <h4 class="mb-0 fw-bold text-primary">{{ professorProfile.academic_title || 'Professor' }}</h4>
+                      <small class="text-muted">Academic Title</small>
+                    </div>
+                  </div>
+                </div>
+              }
+
+              <!-- Admin Stats -->
+              @if (isAdmin()) {
+                <div class="row g-3 text-center mb-4">
+                  <div class="col-12">
+                    <div class="stat-card bg-danger bg-opacity-10 rounded p-3">
+                      <div class="stat-icon text-danger mb-2">
+                        <i class="fa fa-user-shield fa-2x"></i>
+                      </div>
+                      <h4 class="mb-0 fw-bold text-danger">Administrator</h4>
+                      <small class="text-muted">System Admin</small>
+                    </div>
+                  </div>
+                </div>
+              }
+
+              <!-- Status Badge -->
+              <div class="text-center mb-4">
+                <span
+                  class="badge px-3 py-2"
+                  [ngClass]="getStatusBadgeClass(profile()!.status)">
+                  <i class="fa fa-circle me-1"></i>
+                  {{ profile()!.status | titlecase }}
+                </span>
+              </div>
+
+              <!-- Action Buttons -->
+              <div class="d-grid gap-2">
+                <button class="btn btn-primary btn-lg">
+                  <i class="fa fa-edit me-2"></i>Edit Profile
+                </button>
+                <button class="btn btn-outline-secondary">
+                  <i class="fa fa-key me-2"></i>Change Password
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column - Profile Details -->
+        <div class="col-lg-8">
+          <!-- Student Profile Details -->
+          @if (studentProfile) {
+            <!-- Personal Information -->
+            <div class="card shadow-sm border-0 mb-4">
+              <div class="card-header bg-white border-0 pt-4 px-4">
+                <h4 class="mb-0 fw-bold">
+                  <i class="fa fa-user text-primary me-2"></i>Personal Information
+                </h4>
+              </div>
+              <div class="card-body p-4">
+                <div class="row g-4">
+                  <div class="col-md-6">
+                    <div class="detail-item">
+                      <label class="detail-label">First Name</label>
+                      <p class="detail-value">{{ studentProfile.first_name }}</p>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="detail-item">
+                      <label class="detail-label">Last Name</label>
+                      <p class="detail-value">{{ studentProfile.last_name }}</p>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="detail-item">
+                      <label class="detail-label">Email</label>
+                      <p class="detail-value">{{ studentProfile.email }}</p>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="detail-item">
+                      <label class="detail-label">Phone</label>
+                      <p class="detail-value">{{ studentProfile.phone || 'Not provided' }}</p>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="detail-item">
+                      <label class="detail-label">Date of Birth</label>
+                      <p class="detail-value">{{ studentProfile.date_of_birth ? (studentProfile.date_of_birth | date: 'mediumDate') : 'Not provided' }}</p>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="detail-item">
+                      <label class="detail-label">Gender</label>
+                      <p class="detail-value">{{ studentProfile.gender ? (studentProfile.gender | titlecase) : 'Not provided' }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Academic Information -->
+            <div class="card shadow-sm border-0 mb-4">
+              <div class="card-header bg-white border-0 pt-4 px-4">
+                <h4 class="mb-0 fw-bold">
+                  <i class="fa fa-graduation-cap text-primary me-2"></i>Academic Information
+                </h4>
+              </div>
+              <div class="card-body p-4">
+                <div class="row g-4">
+                  <div class="col-md-6">
+                    <div class="detail-item">
+                      <label class="detail-label">Student Index</label>
+                      <p class="detail-value">{{ studentProfile.student_index || 'Not assigned' }}</p>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="detail-item">
+                      <label class="detail-label">Student Code</label>
+                      <p class="detail-value">{{ studentProfile.code || 'Not assigned' }}</p>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="detail-item">
+                      <label class="detail-label">Year of Study</label>
+                      <p class="detail-value">Year {{ studentProfile.year_of_study }}</p>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="detail-item">
+                      <label class="detail-label">Department</label>
+                      <p class="detail-value">{{ studentProfile.department || 'Not assigned' }}</p>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="detail-item">
+                      <label class="detail-label">GPA</label>
+                      <p class="detail-value">{{ studentProfile.gpa || 'Not calculated' }}</p>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="detail-item">
+                      <label class="detail-label">Academic Status</label>
+                      <p class="detail-value">{{ studentProfile.status | titlecase }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+
+          <!-- Professor Profile Details -->
+          @if (professorProfile) {
+            <!-- Personal Information -->
+            <div class="card shadow-sm border-0 mb-4">
+              <div class="card-header bg-white border-0 pt-4 px-4">
+                <h4 class="mb-0 fw-bold">
+                  <i class="fa fa-user text-primary me-2"></i>Personal Information
+                </h4>
+              </div>
+              <div class="card-body p-4">
+                <div class="row g-4">
+                  <div class="col-md-6">
+                    <div class="detail-item">
+                      <label class="detail-label">First Name</label>
+                      <p class="detail-value">{{ professorProfile.first_name }}</p>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="detail-item">
+                      <label class="detail-label">Last Name</label>
+                      <p class="detail-value">{{ professorProfile.last_name }}</p>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="detail-item">
+                      <label class="detail-label">Email</label>
+                      <p class="detail-value">{{ professorProfile.email }}</p>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="detail-item">
+                      <label class="detail-label">Phone</label>
+                      <p class="detail-value">{{ professorProfile.phone || 'Not provided' }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Professional Information -->
+            <div class="card shadow-sm border-0 mb-4">
+              <div class="card-header bg-white border-0 pt-4 px-4">
+                <h4 class="mb-0 fw-bold">
+                  <i class="fa fa-briefcase text-primary me-2"></i>Professional Information
+                </h4>
+              </div>
+              <div class="card-body p-4">
+                <div class="row g-4">
+                  <div class="col-md-6">
+                    <div class="detail-item">
+                      <label class="detail-label">Professor Code</label>
+                      <p class="detail-value">{{ professorProfile.code || 'Not assigned' }}</p>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="detail-item">
+                      <label class="detail-label">Academic Title</label>
+                      <p class="detail-value">{{ professorProfile.academic_title || 'Not specified' }}</p>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="detail-item">
+                      <label class="detail-label">Department</label>
+                      <p class="detail-value">{{ professorProfile.department || 'Not assigned' }}</p>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="detail-item">
+                      <label class="detail-label">Employment Type</label>
+                      <p class="detail-value">{{ formatEmploymentType(professorProfile.employment_type) }}</p>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="detail-item">
+                      <label class="detail-label">Office Location</label>
+                      <p class="detail-value">{{ professorProfile.office_location || 'Not assigned' }}</p>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="detail-item">
+                      <label class="detail-label">Office Hours</label>
+                      <p class="detail-value">{{ professorProfile.office_hours || 'Not set' }}</p>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="detail-item">
+                      <label class="detail-label">Status</label>
+                      <p class="detail-value">{{ professorProfile.status | titlecase }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+
+          <!-- Account Information (All Users) -->
+          <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+              <h4 class="mb-0 fw-bold">
+                <i class="fa fa-id-card text-primary me-2"></i>Account Information
+              </h4>
+            </div>
+            <div class="card-body p-4">
+              <div class="row g-4">
+                <div class="col-md-6">
+                  <div class="detail-item">
+                    <label class="detail-label">User ID</label>
+                    <p class="detail-value">{{ profile()!.id }}</p>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="detail-item">
+                    <label class="detail-label">Email Address</label>
+                    <p class="detail-value">{{ profile()!.email }}</p>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="detail-item">
+                    <label class="detail-label">Account Type</label>
+                    <p class="detail-value">{{ profile()!.type | titlecase }}</p>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="detail-item">
+                    <label class="detail-label">Account Status</label>
+                    <p class="detail-value">{{ profile()!.status | titlecase }}</p>
+                  </div>
+                </div>
+                @if (studentProfile) {
+                  <div class="col-md-6">
+                    <div class="detail-item">
+                      <label class="detail-label">Created At</label>
+                      <p class="detail-value">{{ studentProfile.created_at | date: 'medium' }}</p>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="detail-item">
+                      <label class="detail-label">Last Updated</label>
+                      <p class="detail-value">{{ studentProfile.updated_at | date: 'medium' }}</p>
+                    </div>
+                  </div>
+                }
+                @if (professorProfile) {
+                  <div class="col-md-6">
+                    <div class="detail-item">
+                      <label class="detail-label">Created At</label>
+                      <p class="detail-value">{{ professorProfile.created_at | date: 'medium' }}</p>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="detail-item">
+                      <label class="detail-label">Last Updated</label>
+                      <p class="detail-value">{{ professorProfile.updated_at | date: 'medium' }}</p>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    } @else {
+      <!-- Loading State -->
+      <div class="text-center py-5">
+        <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-3 text-muted fs-5">Loading profile...</p>
+      </div>
+    }
+  </div>
+</div>
