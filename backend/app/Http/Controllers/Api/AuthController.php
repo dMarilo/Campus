@@ -42,6 +42,9 @@ class AuthController extends Controller
 
         $user = JWTAuth::user();
 
+        // Eager load profile relationships
+        $user->load(['student', 'professor']);
+
         // Check if email is verified
         if (!$user->isEmailVerified()) {
             // Invalidate the token since we won't allow login
@@ -88,9 +91,43 @@ class AuthController extends Controller
                     'email'  => $user->email,
                     'type'   => $user->type,
                     'status' => $user->status,
+                    'name'   => $this->computeUserName($user),
+                    'avatar' => $this->computeAvatarUrl($this->computeUserName($user)),
                 ],
             ],
         ]);
+    }
+
+    /**
+     * Compute the display name for a user.
+     *
+     * @param \App\Models\User $user
+     * @return string
+     */
+    private function computeUserName($user): string
+    {
+        if ($user->type === \App\Models\User::TYPE_STUDENT && $user->student) {
+            return $user->student->fullName();
+        }
+
+        if ($user->type === \App\Models\User::TYPE_PROFESSOR && $user->professor) {
+            return $user->professor->fullName();
+        }
+
+        // Fallback for admin or users without profiles
+        return explode('@', $user->email)[0];
+    }
+
+    /**
+     * Generate avatar URL using ui-avatars.com API.
+     *
+     * @param string $name
+     * @return string
+     */
+    private function computeAvatarUrl(string $name): string
+    {
+        $encodedName = urlencode($name);
+        return "https://ui-avatars.com/api/?name={$encodedName}&size=200&background=667eea&color=fff&bold=true";
     }
 
     /**

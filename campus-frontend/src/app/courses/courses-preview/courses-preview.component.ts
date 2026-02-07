@@ -6,7 +6,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-course-preview',
-  imports: [RouterLink, DatePipe, TitleCasePipe],
+  imports: [RouterLink, TitleCasePipe],
   templateUrl: './courses-preview.component.html',
   styleUrl: './courses-preview.component.scss',
 })

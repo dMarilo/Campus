@@ -98,4 +98,84 @@ class UserController extends Controller
             ], Response::HTTP_CREATED);
         });
     }
+
+    /**
+     * Get the authenticated user's profile with full details.
+     *
+     * This endpoint:
+     *  - Returns the current user's profile information
+     *  - Includes student or professor profile data based on user type
+     *  - Computes display name and avatar URL
+     *  - Works for all user types (admin, student, professor)
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function profile()
+    {
+        $user = auth()->user();
+
+        // Eager load the appropriate profile relationship
+        if ($user->type === User::TYPE_STUDENT) {
+            $user->load('student');
+        } elseif ($user->type === User::TYPE_PROFESSOR) {
+            $user->load('professor');
+        }
+
+        // Compute name and avatar
+        $name = $this->computeUserName($user);
+        $avatar = $this->computeAvatarUrl($name);
+
+        // Build response
+        $response = [
+            'id' => $user->id,
+            'email' => $user->email,
+            'type' => $user->type,
+            'status' => $user->status,
+            'name' => $name,
+            'avatar' => $avatar,
+        ];
+
+        // Add profile data if available
+        if ($user->type === User::TYPE_STUDENT && $user->student) {
+            $response['profile'] = $user->student;
+        } elseif ($user->type === User::TYPE_PROFESSOR && $user->professor) {
+            $response['profile'] = $user->professor;
+        }
+
+        return response()->json([
+            'data' => $response,
+        ]);
+    }
+
+    /**
+     * Compute the display name for a user.
+     *
+     * @param User $user
+     * @return string
+     */
+    private function computeUserName(User $user): string
+    {
+        if ($user->type === User::TYPE_STUDENT && $user->student) {
+            return $user->student->fullName();
+        }
+
+        if ($user->type === User::TYPE_PROFESSOR && $user->professor) {
+            return $user->professor->fullName();
+        }
+
+        // Fallback for admin or users without profiles
+        return explode('@', $user->email)[0];
+    }
+
+    /**
+     * Generate avatar URL using ui-avatars.com API.
+     *
+     * @param string $name
+     * @return string
+     */
+    private function computeAvatarUrl(string $name): string
+    {
+        $encodedName = urlencode($name);
+        return "https://ui-avatars.com/api/?name={$encodedName}&size=200&background=667eea&color=fff&bold=true";
+    }
 }

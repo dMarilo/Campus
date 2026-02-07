@@ -1,0 +1,27 @@
+.exam-row {
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: #f8f9fa;
+    transform: translateY(-1px);
+  }
+}
+
+.card {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.input-group-text {
+  border-right: 0;
+}
+
+.form-control {
+  border-left: 0;
+
+  &:focus {
+    box-shadow: none;
+    border-color: #dee2e6;
+  }
+}

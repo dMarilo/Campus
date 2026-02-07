@@ -1,0 +1,374 @@
+<div class="exam-preview-container">
+  <div class="container py-4">
+    <!-- Header with back button -->
+    <div class="mb-4">
+      <button class="btn btn-link text-decoration-none p-0" routerLink="/exams">
+        <i class="fa fa-arrow-left me-2"></i>
+        <span>Back to Exams</span>
+      </button>
+    </div>
+
+    @if (exam()) {
+      <div class="row g-4">
+        <!-- Left Column - Exam Info Card -->
+        <div class="col-lg-4">
+          <div class="card shadow-lg border-0 sticky-top" style="top: 20px;">
+            <!-- Exam Header -->
+            <div class="exam-header">
+              <div class="exam-icon">
+                <i class="fa fa-clipboard-list fa-4x text-white"></i>
+              </div>
+              <div class="text-center text-white p-3">
+                <h3 class="mb-1 fw-bold">{{ exam()!.title || 'Exam #' + exam()!.id }}</h3>
+                <p class="mb-0 opacity-75">{{ formatExamType(exam()!.type) }}</p>
+              </div>
+            </div>
+
+            <div class="card-body">
+              <!-- Quick Stats -->
+              <div class="row g-3 text-center mb-4">
+                <div class="col-6">
+                  <div class="stat-card bg-primary bg-opacity-10 rounded p-3">
+                    <div class="stat-icon text-primary mb-2">
+                      <i class="fa fa-users fa-2x"></i>
+                    </div>
+                    <h4 class="mb-0 fw-bold text-primary">{{ exam()!.exam_results?.length || 0 }}</h4>
+                    <small class="text-muted">Students</small>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="stat-card bg-info bg-opacity-10 rounded p-3">
+                    <div class="stat-icon text-info mb-2">
+                      <i class="fa fa-star fa-2x"></i>
+                    </div>
+                    <h4 class="mb-0 fw-bold text-info">{{ exam()!.max_points }}</h4>
+                    <small class="text-muted">Max Points</small>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Exam Details -->
+              <div class="detail-list mb-4">
+                <div class="detail-row">
+                  <span class="detail-label">Course</span>
+                  <span class="detail-value">{{ exam()!.course_class?.course?.name || 'N/A' }}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">Course Code</span>
+                  <span class="detail-value">{{ exam()!.course_class?.course?.code || 'N/A' }}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">Department</span>
+                  <span class="detail-value">{{ exam()!.course_class?.course?.department || 'N/A' }}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">Exam Date</span>
+                  <span class="detail-value">{{ exam()!.exam_date | date:'fullDate' }}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">Exam Time</span>
+                  <span class="detail-value">{{ exam()!.exam_time }}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">Classroom</span>
+                  <span class="detail-value">{{ exam()!.classroom_name || 'TBA' }}</span>
+                </div>
+              </div>
+
+              <!-- Status Badge -->
+              <div class="text-center mb-4">
+                <span
+                  class="badge px-3 py-2"
+                  [ngClass]="getStatusBadgeClass(exam()!.status)">
+                  <i class="fa fa-circle me-1"></i>
+                  {{ exam()!.status | titlecase }}
+                </span>
+              </div>
+
+              <!-- Action Buttons -->
+              <div class="d-grid gap-2">
+                <button
+                  class="btn btn-primary btn-lg"
+                  routerLink="/classes/{{ exam()!.class_id }}">
+                  <i class="fa fa-chalkboard me-2"></i>View Class
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column - Results & Statistics -->
+        <div class="col-lg-8">
+
+          <!-- Tab Navigation -->
+          <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white border-0 pt-3 px-4">
+              <div class="d-flex gap-2">
+                <button
+                  type="button"
+                  class="btn"
+                  [class.btn-primary]="activeTab() === 'results'"
+                  [class.btn-outline-primary]="activeTab() !== 'results'"
+                  (click)="switchTab('results')">
+                  <i class="fa fa-list me-2"></i>
+                  Results
+                  <span class="badge bg-white text-primary ms-2">{{ exam()!.exam_results?.length || 0 }}</span>
+                </button>
+                <button
+                  type="button"
+                  class="btn"
+                  [class.btn-primary]="activeTab() === 'statistics'"
+                  [class.btn-outline-primary]="activeTab() !== 'statistics'"
+                  (click)="switchTab('statistics')">
+                  <i class="fa fa-chart-bar me-2"></i>
+                  Statistics
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Results Tab -->
+          @if (activeTab() === 'results') {
+            <div class="card shadow-sm border-0 mb-4">
+              <div class="card-header bg-white border-0 pt-4 px-4">
+                <h4 class="mb-0 fw-bold">
+                  <i class="fa fa-list text-primary me-2"></i>Student Results
+                </h4>
+              </div>
+              <div class="card-body p-4">
+                @if ((exam()!.exam_results?.length || 0) === 0) {
+                  <div class="text-center py-5">
+                    <i class="fa fa-users fa-3x text-muted mb-3"></i>
+                    <p class="text-muted mb-0">No students have taken this exam yet</p>
+                  </div>
+                } @else {
+                  <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                      <thead class="table-light">
+                        <tr>
+                          <th scope="col" style="width: 50px">#</th>
+                          <th scope="col">Student</th>
+                          <th scope="col">Student Code</th>
+                          <th scope="col" class="text-center">Grade</th>
+                          <th scope="col" class="text-center">Percentage</th>
+                          <th scope="col" class="text-center">Letter Grade</th>
+                          <th scope="col" class="text-center">Status</th>
+                          <th scope="col">Registration Date</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @for (result of exam()!.exam_results; track result.id; let i = $index) {
+                          <tr>
+                            <th scope="row" class="text-muted">{{ i + 1 }}</th>
+                            <td>
+                              <div class="d-flex align-items-center gap-2">
+                                <img
+                                  [src]="'https://ui-avatars.com/api/?name=' + (result.student?.user?.name || 'Student') + '&size=32&background=17a2b8&color=fff&bold=true'"
+                                  alt="Avatar"
+                                  class="rounded-circle"
+                                  style="width: 32px; height: 32px;"
+                                />
+                                <span>{{ result.student?.user?.name || 'N/A' }}</span>
+                              </div>
+                            </td>
+                            <td class="fw-semibold">{{ result.student?.student_code || 'N/A' }}</td>
+                            <td class="text-center">
+                              @if (result.grade !== null) {
+                                <span class="badge bg-info">{{ result.grade }} / {{ exam()!.max_points }}</span>
+                              } @else {
+                                <span class="text-muted">Not graded</span>
+                              }
+                            </td>
+                            <td class="text-center">
+                              @if (result.percentage !== undefined) {
+                                <span>{{ result.percentage | number:'1.0-1' }}%</span>
+                              } @else {
+                                <span class="text-muted">-</span>
+                              }
+                            </td>
+                            <td class="text-center">
+                              @if (result.letter_grade) {
+                                <span class="badge bg-secondary">{{ result.letter_grade }}</span>
+                              } @else {
+                                <span class="text-muted">-</span>
+                              }
+                            </td>
+                            <td class="text-center">
+                              <span
+                                class="badge"
+                                [class.bg-success]="result.passed"
+                                [class.bg-danger]="!result.passed && result.grade !== null"
+                                [class.bg-warning]="result.grade === null">
+                                {{ result.passed ? 'Passed' : (result.grade !== null ? 'Failed' : 'Pending') }}
+                              </span>
+                            </td>
+                            <td>{{ result.registration_date | date:'medium' }}</td>
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+
+          <!-- Statistics Tab -->
+          @if (activeTab() === 'statistics') {
+            <div class="card shadow-sm border-0 mb-4">
+              <div class="card-header bg-white border-0 pt-4 px-4">
+                <h4 class="mb-0 fw-bold">
+                  <i class="fa fa-chart-bar text-primary me-2"></i>Exam Statistics
+                </h4>
+              </div>
+              <div class="card-body p-4">
+                @if (loadingStatistics()) {
+                  <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                      <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-3 text-muted">Loading statistics...</p>
+                  </div>
+                } @else if (statistics()) {
+                  <!-- Statistics Cards -->
+                  <div class="row g-4 mb-4">
+                    <div class="col-md-6">
+                      <div class="stat-card-large bg-primary bg-opacity-10 rounded p-4">
+                        <div class="d-flex align-items-center">
+                          <div class="stat-icon-large text-primary me-3">
+                            <i class="fa fa-users fa-3x"></i>
+                          </div>
+                          <div>
+                            <h2 class="mb-0 fw-bold text-primary">{{ statistics()!.total_students }}</h2>
+                            <p class="mb-0 text-muted">Total Students</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="stat-card-large bg-success bg-opacity-10 rounded p-4">
+                        <div class="d-flex align-items-center">
+                          <div class="stat-icon-large text-success me-3">
+                            <i class="fa fa-check-circle fa-3x"></i>
+                          </div>
+                          <div>
+                            <h2 class="mb-0 fw-bold text-success">{{ statistics()!.passed_students }}</h2>
+                            <p class="mb-0 text-muted">Passed</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="stat-card-large bg-danger bg-opacity-10 rounded p-4">
+                        <div class="d-flex align-items-center">
+                          <div class="stat-icon-large text-danger me-3">
+                            <i class="fa fa-times-circle fa-3x"></i>
+                          </div>
+                          <div>
+                            <h2 class="mb-0 fw-bold text-danger">{{ statistics()!.failed_students }}</h2>
+                            <p class="mb-0 text-muted">Failed</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="stat-card-large bg-warning bg-opacity-10 rounded p-4">
+                        <div class="d-flex align-items-center">
+                          <div class="stat-icon-large text-warning me-3">
+                            <i class="fa fa-clock fa-3x"></i>
+                          </div>
+                          <div>
+                            <h2 class="mb-0 fw-bold text-warning">{{ statistics()!.ungraded_students }}</h2>
+                            <p class="mb-0 text-muted">Pending Grading</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Additional Statistics -->
+                  <div class="row g-4">
+                    <div class="col-md-6">
+                      <div class="detail-item">
+                        <label class="detail-label">Pass Rate</label>
+                        <div class="progress" style="height: 30px;">
+                          <div
+                            class="progress-bar bg-success"
+                            role="progressbar"
+                            [style.width.%]="statistics()!.pass_rate"
+                            [attr.aria-valuenow]="statistics()!.pass_rate"
+                            aria-valuemin="0"
+                            aria-valuemax="100">
+                            <strong>{{ statistics()!.pass_rate | number:'1.1-1' }}%</strong>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="detail-item">
+                        <label class="detail-label">Average Grade</label>
+                        <p class="detail-value fs-3 fw-bold text-primary">
+                          {{ statistics()!.average_grade | number:'1.2-2' }} / {{ exam()!.max_points }}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                } @else {
+                  <div class="text-center py-5">
+                    <i class="fa fa-chart-bar fa-3x text-muted mb-3"></i>
+                    <p class="text-muted mb-0">No statistics available</p>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+
+          <!-- System Information -->
+          @if (exam()!.created_at) {
+            <div class="card shadow-sm border-0">
+              <div class="card-header bg-white border-0 pt-4 px-4">
+                <h4 class="mb-0 fw-bold">
+                  <i class="fa fa-database text-primary me-2"></i>System Information
+                </h4>
+              </div>
+              <div class="card-body p-4">
+                <div class="row g-4">
+                  <div class="col-md-6">
+                    <div class="detail-item">
+                      <label class="detail-label">Created At</label>
+                      <p class="detail-value">{{ exam()!.created_at | date:'medium' }}</p>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="detail-item">
+                      <label class="detail-label">Last Updated</label>
+                      <p class="detail-value">{{ exam()!.updated_at | date:'medium' }}</p>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="detail-item">
+                      <label class="detail-label">Exam ID</label>
+                      <p class="detail-value">#{{ exam()!.id }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    } @else {
+      <!-- Exam Not Found -->
+      <div class="card shadow-sm border-0">
+        <div class="card-body text-center py-5">
+          <i class="fa fa-exclamation-triangle fa-4x text-warning mb-3"></i>
+          <h3>Exam Not Found</h3>
+          <p class="text-muted">The exam you're looking for doesn't exist.</p>
+          <button class="btn btn-primary" routerLink="/exams">
+            <i class="fa fa-arrow-left me-2"></i>Back to Exams
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+</div>

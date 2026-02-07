@@ -1,0 +1,88 @@
+.exam-preview-container {
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+.exam-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 2rem;
+  text-align: center;
+}
+
+.exam-icon {
+  margin-bottom: 1rem;
+}
+
+.stat-card {
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+  }
+}
+
+.stat-card-large {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.detail-list {
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #e9ecef;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .detail-label {
+      font-weight: 600;
+      color: #6c757d;
+    }
+
+    .detail-value {
+      color: #212529;
+      text-align: right;
+    }
+  }
+}
+
+.detail-item {
+  .detail-label {
+    display: block;
+    font-weight: 600;
+    color: #6c757d;
+    margin-bottom: 0.5rem;
+  }
+
+  .detail-value {
+    color: #212529;
+    margin: 0;
+  }
+}
+
+.card {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.btn {
+  border-radius: 8px;
+}
+
+.progress {
+  border-radius: 15px;
+  font-size: 14px;
+}
+
+.progress-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
