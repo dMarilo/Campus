@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { LibraryService } from '../library.service';
 import { RouterLink } from '@angular/router';
+import { AuthService } from '../../auth/auth.service';
 
 @Component({
   selector: 'app-labriray-table',
@@ -12,6 +13,8 @@ import { RouterLink } from '@angular/router';
 })
 export class LabrirayTable {
   libraryService = inject(LibraryService);
+  authService = inject(AuthService);
+  isAdmin = this.authService.isAdmin();
   books = computed(() => this.libraryService.booksSignal());
   searchTerm = signal<string>('');
   isLoading = signal<boolean>(true);

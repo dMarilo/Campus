@@ -27,7 +27,7 @@
             <div class="card-body">
               <!-- Quick Stats -->
               <div class="row g-3 text-center mb-4">
-                <div class="col-6">
+                <div [class]="isStudent ? 'col-12' : 'col-6'">
                   <div class="stat-card bg-primary bg-opacity-10 rounded p-3">
                     <div class="stat-icon text-primary mb-2">
                       <i class="fa fa-chalkboard-teacher fa-2x"></i>
@@ -36,15 +36,17 @@
                     <small class="text-muted">Professors</small>
                   </div>
                 </div>
-                <div class="col-6">
-                  <div class="stat-card bg-info bg-opacity-10 rounded p-3">
-                    <div class="stat-icon text-info mb-2">
-                      <i class="fa fa-user-graduate fa-2x"></i>
+                @if (!isStudent) {
+                  <div class="col-6">
+                    <div class="stat-card bg-info bg-opacity-10 rounded p-3">
+                      <div class="stat-icon text-info mb-2">
+                        <i class="fa fa-user-graduate fa-2x"></i>
+                      </div>
+                      <h4 class="mb-0 fw-bold text-info">{{ students().length }}</h4>
+                      <small class="text-muted">Students</small>
                     </div>
-                    <h4 class="mb-0 fw-bold text-info">{{ students().length }}</h4>
-                    <small class="text-muted">Students</small>
                   </div>
-                </div>
+                }
               </div>
 
               <!-- Class Details -->
@@ -121,16 +123,18 @@
                   Professors
                   <span class="badge bg-white text-primary ms-2">{{ professors().length }}</span>
                 </button>
-                <button
-                  type="button"
-                  class="btn"
-                  [class.btn-primary]="activeTab() === 'students'"
-                  [class.btn-outline-primary]="activeTab() !== 'students'"
-                  (click)="switchTab('students')">
-                  <i class="fa fa-user-graduate me-2"></i>
-                  Students
-                  <span class="badge bg-white text-primary ms-2">{{ students().length }}</span>
-                </button>
+                @if (!isStudent) {
+                  <button
+                    type="button"
+                    class="btn"
+                    [class.btn-primary]="activeTab() === 'students'"
+                    [class.btn-outline-primary]="activeTab() !== 'students'"
+                    (click)="switchTab('students')">
+                    <i class="fa fa-user-graduate me-2"></i>
+                    Students
+                    <span class="badge bg-white text-primary ms-2">{{ students().length }}</span>
+                  </button>
+                }
               </div>
             </div>
           </div>
@@ -289,7 +293,7 @@
           }
 
           <!-- Students Tab -->
-          @if (activeTab() === 'students') {
+          @if (!isStudent && activeTab() === 'students') {
             <div class="card shadow-sm border-0 mb-4">
               <div class="card-header bg-white border-0 pt-4 px-4">
                 <h4 class="mb-0 fw-bold">

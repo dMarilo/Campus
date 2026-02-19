@@ -4,9 +4,11 @@ import { LoginComponent } from './auth/login/login.component';
 import { VerifyEmailComponent } from './auth/verify-email/verify-email.component';
 import { SetPasswordComponent } from './auth/set-password/set-password.component';
 import { ClassroomTerminalComponent } from './classrooms/terminal/classroom-terminal.component';
+import { BorrowingTerminalComponent } from './library/borrowing-terminal/borrowing-terminal.component';
 
 import { authGuard } from './auth/auth.guard';
 import { loginGuard } from './auth/login.guard';
+import { adminGuard } from './auth/admin.guard';
 import { LayoutComponent } from './main-layout/layout/layout.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { LabrirayLayout } from './library/labriray-layout/labriray-layout';
@@ -30,6 +32,9 @@ import { ExamsTable } from './exams/exams-table/exams-table.component';
 import { ExamsPreview } from './exams/exams-preview/exams-preview.component';
 import { ProfileLayout } from './profile/profile-layout/profile-layout.component';
 import { ProfilePreview } from './profile/profile-preview/profile-preview.component';
+import { SessionsLayout } from './sessions/sessions-layout/sessions-layout.component';
+import { SessionsTable } from './sessions/sessions-table/sessions-table.component';
+import { SessionsPreview } from './sessions/sessions-preview/sessions-preview.component';
 
 export const routes: Routes = [
   // Public routes (NO authentication required)
@@ -69,7 +74,7 @@ export const routes: Routes = [
         component: LabrirayLayout,
         children: [
           { path: '', component: LabrirayTable },
-          { path: 'add-book', component: AddBook },
+          { path: 'add-book', component: AddBook, canActivate: [adminGuard] },
           { path: 'book/:id', component: BookPreview },
         ],
       },
@@ -122,6 +127,15 @@ export const routes: Routes = [
         ],
       },
       {
+        path: 'sessions',
+        component: SessionsLayout,
+        canActivate: [adminGuard],
+        children: [
+          { path: '', component: SessionsTable },
+          { path: ':id', component: SessionsPreview },
+        ],
+      },
+      {
         path: 'profile',
         component: ProfileLayout,
         children: [
@@ -136,6 +150,12 @@ export const routes: Routes = [
     path: 'classrooms/:id/terminal',
     component: ClassroomTerminalComponent,
     canActivate: [authGuard],
+  },
+
+  // Borrowing terminal (public - no authentication required)
+  {
+    path: 'library/terminal',
+    component: BorrowingTerminalComponent,
   },
 
   // Wildcard - redirect to login

@@ -8,9 +8,11 @@
           </h1>
           <p class="text-muted mb-0">Book collection</p>
         </div>
-        <button routerLink="/library/add-book" class="btn btn-primary btn-lg">
-          <i class="fa fa-plus me-2"></i>Add New Book
-        </button>
+        @if (isAdmin) {
+          <button routerLink="/library/add-book" class="btn btn-primary btn-lg">
+            <i class="fa fa-plus me-2"></i>Add New Book
+          </button>
+        }
       </div>
     </div>
   </div>

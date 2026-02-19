@@ -41,6 +41,16 @@ export class ProfilePreview {
     return (prof?.type === 'professor' ? prof.profile as ProfessorProfile : undefined);
   }
 
+  getProfileAvatar(): string {
+    const type = this.profile()?.type;
+    const avatarMap: Record<string, string> = {
+      student: 'assets/images/student.jpg',
+      professor: 'assets/images/profesor.jpg',
+      admin: 'assets/images/admin.jpg',
+    };
+    return avatarMap[type || ''] || 'assets/images/student.jpg';
+  }
+
   getStatusBadgeClass(status: string): string {
     const statusMap: { [key: string]: string } = {
       'active': 'bg-success',

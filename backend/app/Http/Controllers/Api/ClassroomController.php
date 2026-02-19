@@ -95,4 +95,38 @@ class ClassroomController extends Controller
             'status'  => $status,
         ], 201);
     }
+
+    /**
+     * Get current session status for a classroom
+     * Returns session data with students and their check-in status
+     */
+    public function getCurrentSession(int $classroomId): JsonResponse
+    {
+        $session = ClassroomSession::where('classroom_id', $classroomId)
+            ->where('status', 'ongoing')
+            ->with([
+                'classroom',
+                'professor',
+                'courseClass.course',
+            ])
+            ->first();
+
+        if (!$session) {
+            return response()->json([
+                'message' => 'No active session found.',
+                'data' => null,
+            ], 404);
+        }
+
+        // Get all students enrolled in the class with their check-in status
+        $students = $session->getStudentsWithAttendance();
+
+        // Add students to session data
+        $sessionData = $session->toArray();
+        $sessionData['students'] = $students;
+
+        return response()->json([
+            'data' => $sessionData,
+        ]);
+    }
 }

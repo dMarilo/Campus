@@ -3,6 +3,7 @@ import { ClassesService, ClassProfessor, ClassStudent } from '../classes.service
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { DatePipe, TitleCasePipe } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { AuthService } from '../../auth/auth.service';
 
 @Component({
   selector: 'app-classes-preview',
@@ -12,8 +13,10 @@ import { toSignal } from '@angular/core/rxjs-interop';
 })
 export class ClassesPreview implements OnInit {
   classesService = inject(ClassesService);
+  authService = inject(AuthService);
   activatedRoute = inject(ActivatedRoute);
   router = inject(Router);
+  isStudent = this.authService.getUser()?.type === 'student';
 
   courseClass = toSignal(
     this.classesService.getClass(
@@ -37,7 +40,9 @@ export class ClassesPreview implements OnInit {
 
   ngOnInit() {
     this.loadProfessors();
-    this.loadStudents();
+    if (!this.isStudent) {
+      this.loadStudents();
+    }
   }
 
   loadProfessors() {

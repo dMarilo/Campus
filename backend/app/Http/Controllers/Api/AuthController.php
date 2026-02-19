@@ -93,6 +93,9 @@ class AuthController extends Controller
                     'status' => $user->status,
                     'name'   => $this->computeUserName($user),
                     'avatar' => $this->computeAvatarUrl($this->computeUserName($user)),
+                    'profile' => $user->type === \App\Models\User::TYPE_STUDENT
+                        ? $user->student
+                        : ($user->type === \App\Models\User::TYPE_PROFESSOR ? $user->professor : null),
                 ],
             ],
         ]);

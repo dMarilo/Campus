@@ -33,4 +33,10 @@ export class ClassroomSessionService {
     );
   }
 
+  getCurrentSession(classroomId: number): Observable<any> {
+    return this.http.get(
+      `${this.API_URL}/classrooms/${classroomId}/current-session`
+    );
+  }
+
 }
