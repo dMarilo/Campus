@@ -72,9 +72,40 @@ class ClassroomSession extends Model
         return $this->status === 'scheduled';
     }
 
+    /**
+     * Get all students enrolled in the class with their check-in status
+     */
+    public function getStudentsWithAttendance(): array
+    {
+        // Get all students enrolled in this class
+        $attendances = Attendance::where('class_id', $this->course_class_id)
+            ->with('student')
+            ->get();
 
+        // Get session attendance records
+        $sessionAttendances = $this->attendances()
+            ->get()
+            ->keyBy('student_id');
 
-        public function checkInStudentByCode(string $studentCode): string
+        // Map students with their check-in status
+        return $attendances->map(function ($attendance) use ($sessionAttendances) {
+            $student = $attendance->student;
+            $sessionAttendance = $sessionAttendances->get($student->id);
+
+            return [
+                'id' => $student->id,
+                'first_name' => $student->first_name,
+                'last_name' => $student->last_name,
+                'code' => $student->code,
+                'index_number' => $student->student_index,
+                'checked_in' => $sessionAttendance !== null,
+                'checked_in_at' => $sessionAttendance?->checked_in_at,
+                'status' => $sessionAttendance?->status,
+            ];
+        })->values()->toArray();
+    }
+
+    public function checkInStudentByCode(string $studentCode): string
     {
         // 1️⃣ Session must be ongoing
         if ($this->status !== 'ongoing') {

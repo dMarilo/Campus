@@ -61,15 +61,17 @@
                 }
               </div>
 
-              <!-- Action Buttons -->
-              <div class="d-grid gap-2 mt-4">
-                <button class="btn btn-primary btn-lg" routerLink="/library/edit/{{ book()!.id }}">
-                  <i class="fa fa-edit me-2"></i>Edit Book
-                </button>
-                <button class="btn btn-outline-danger" (click)="deleteBook()">
-                  <i class="fa fa-trash me-2"></i>Delete Book
-                </button>
-              </div>
+              <!-- Action Buttons (Admin Only) -->
+              @if (isAdmin) {
+                <div class="d-grid gap-2 mt-4">
+                  <button class="btn btn-primary btn-lg" routerLink="/library/edit/{{ book()!.id }}">
+                    <i class="fa fa-edit me-2"></i>Edit Book
+                  </button>
+                  <button class="btn btn-outline-danger" (click)="deleteBook()">
+                    <i class="fa fa-trash me-2"></i>Delete Book
+                  </button>
+                </div>
+              }
             </div>
           </div>
         </div>

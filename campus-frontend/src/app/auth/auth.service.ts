@@ -66,4 +66,9 @@ export class AuthService {
     // You can decode JWT and check expiration here
     return true;
   }
+
+  isAdmin(): boolean {
+    const user = this.getUser();
+    return user?.type === 'admin';
+  }
 }

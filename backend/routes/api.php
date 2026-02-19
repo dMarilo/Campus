@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\TeachingController;
 use App\Http\Controllers\Api\ExamController;
 use App\Http\Controllers\Api\ExamResultController;
 use App\Http\Controllers\Api\ProfessorController;
+use App\Http\Controllers\Api\SessionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,7 +49,12 @@ Route::post('/auth/login', [AuthController::class, 'login']);
 Route::prefix('classrooms')->group(function () {
     Route::post('/{classroom}/start-session',[ClassroomController::class, 'startSession']);
     Route::post('/{classroom}/end-session',[ClassroomController::class, 'endSession']);
+    Route::get('/{classroom}/current-session',[ClassroomController::class, 'getCurrentSession']);
     Route::post('/{classroom}/check-in',[ClassroomController::class, 'studentCheckIn']);
+});
+
+Route::prefix('library')->group(function () {
+    Route::post('/borrow-terminal', [BorrowingController::class, 'borrowByCodeAndIsbn']);
 });
 
 Route::prefix('auth')->group(function () {
@@ -86,10 +92,14 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/search', [LibraryController::class, 'search']);
         Route::get('/', [LibraryController::class, 'index']);
         Route::get('/{id}', [LibraryController::class, 'show']);
-        Route::post('/', [LibraryController::class, 'store']);
-        Route::put('/{id}', [LibraryController::class, 'update']);
-        Route::delete('/{id}', [LibraryController::class, 'destroy']);
         Route::get('/course/{courseId}', [LibraryController::class, 'byCourse']);
+
+        // Admin-only book management
+        Route::middleware('admin')->group(function () {
+            Route::post('/', [LibraryController::class, 'store']);
+            Route::put('/{id}', [LibraryController::class, 'update']);
+            Route::delete('/{id}', [LibraryController::class, 'destroy']);
+        });
     });
 
     /*
@@ -217,6 +227,18 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/{studentId}/exams/upcoming', [ExamController::class, 'upcomingExamsByStudent']);
         Route::get('/{studentId}/exam-results', [ExamResultController::class, 'studentResults']);
         Route::get('/{studentId}/exam-results/passed', [ExamResultController::class, 'passedResults']);
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Sessions
+    |--------------------------------------------------------------------------
+    | View classroom session history and attendance records.
+    */
+
+    Route::prefix('sessions')->group(function () {
+        Route::get('/', [SessionController::class, 'index']);
+        Route::get('/{id}', [SessionController::class, 'show']);
     });
 
     /*

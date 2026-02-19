@@ -9,17 +9,17 @@
       <span class="terminal-id">TERMINAL {{ classroomId }}</span>
     </div>
     <div class="top-bar-center">
-      <span class="clock">{{ currentTime | date:'HH:mm:ss' }}</span>
+      <span class="clock">{{ currentTime() | date:'HH:mm:ss' }}</span>
     </div>
     <div class="top-bar-right">
-      <span class="date-display">{{ currentTime | date:'EEEE, MMMM d, y' }}</span>
+      <span class="date-display">{{ currentTime() | date:'EEEE, MMMM d, y' }}</span>
     </div>
   </header>
 
   <main class="terminal-main">
 
     <!-- ==================== LOGIN STATE ==================== -->
-    @if (!sessionData) {
+    @if (!sessionData()) {
       <div class="login-panel">
         <div class="login-glyph">
           <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
@@ -70,8 +70,8 @@
             </div>
           </div>
 
-          <button class="btn-start" type="submit" [disabled]="loading">
-            @if (loading) {
+          <button class="btn-start" type="submit" [disabled]="loading()">
+            @if (loading()) {
               <span class="spinner"></span>
               <span>Authenticating…</span>
             } @else {
@@ -83,10 +83,10 @@
             }
           </button>
 
-          @if (errorMessage) {
+          @if (errorMessage()) {
             <div class="error-banner">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-              <span>{{ errorMessage }}</span>
+              <span>{{ errorMessage() }}</span>
             </div>
           }
         </form>
@@ -94,7 +94,7 @@
     }
 
     <!-- ==================== SESSION ACTIVE STATE ==================== -->
-    @if (sessionData) {
+    @if (sessionData()) {
       <div class="session-wrapper">
 
         <!-- Left: Session info panel -->
@@ -104,39 +104,39 @@
             LIVE SESSION
           </div>
 
-          <h1 class="course-name">{{ sessionData.course_class?.course?.name }}</h1>
+          <h1 class="course-name">{{ sessionData().course_class?.course?.name }}</h1>
 
           <div class="meta-grid">
             <div class="meta-card">
               <span class="meta-label">Classroom</span>
-              <span class="meta-value">{{ sessionData.classroom?.name }}</span>
+              <span class="meta-value">{{ sessionData().classroom?.name }}</span>
             </div>
             <div class="meta-card">
               <span class="meta-label">Professor</span>
-              <span class="meta-value">{{ sessionData.professor?.full_name || '—' }}</span>
+              <span class="meta-value">{{ sessionData().professor?.full_name || '—' }}</span>
             </div>
             <div class="meta-card">
               <span class="meta-label">Started</span>
-              <span class="meta-value">{{ sessionData.started_at | date:'shortTime' }}</span>
+              <span class="meta-value">{{ sessionData().started_at | date:'shortTime' }}</span>
             </div>
             <div class="meta-card">
               <span class="meta-label">Duration</span>
-              <span class="meta-value mono">{{ elapsedTime }}</span>
+              <span class="meta-value mono">{{ elapsedTime() }}</span>
             </div>
           </div>
 
           <!-- Quick Stats -->
           <div class="stats-row">
             <div class="stat-block present">
-              <span class="stat-number">{{ presentCount }}</span>
+              <span class="stat-number">{{ presentCount() }}</span>
               <span class="stat-label">Present</span>
             </div>
             <div class="stat-block absent">
-              <span class="stat-number">{{ absentCount }}</span>
+              <span class="stat-number">{{ absentCount() }}</span>
               <span class="stat-label">Absent</span>
             </div>
             <div class="stat-block total">
-              <span class="stat-number">{{ totalStudents }}</span>
+              <span class="stat-number">{{ totalStudents() }}</span>
               <span class="stat-label">Enrolled</span>
             </div>
           </div>
@@ -146,11 +146,11 @@
             <div class="attendance-bar">
               <div
                 class="attendance-bar-fill"
-                [style.width.%]="totalStudents ? (presentCount / totalStudents) * 100 : 0"
+                [style.width.%]="totalStudents() ? (presentCount() / totalStudents()) * 100 : 0"
               ></div>
             </div>
             <span class="attendance-pct">
-              {{ totalStudents ? ((presentCount / totalStudents) * 100 | number:'1.0-0') : 0 }}% attendance
+              {{ totalStudents() ? ((presentCount() / totalStudents()) * 100 | number:'1.0-0') : 0 }}% attendance
             </span>
           </div>
 
@@ -158,9 +158,9 @@
             type="button"
             class="btn-end"
             (click)="endSession()"
-            [disabled]="loading"
+            [disabled]="loading()"
           >
-            @if (loading) {
+            @if (loading()) {
               <span class="spinner spinner-light"></span>
               <span>Ending…</span>
             } @else {
@@ -182,7 +182,8 @@
                 type="text"
                 class="roster-search"
                 placeholder="Search students…"
-                [(ngModel)]="studentSearch"
+                [ngModel]="studentSearch()"
+                (ngModelChange)="studentSearch.set($event)"
               />
             </div>
           </div>

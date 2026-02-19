@@ -85,13 +85,15 @@
                       title="View Details">
                       <i class="fa fa-eye"></i>
                     </button>
-                    <button
-                      type="button"
-                      class="btn btn-sm btn-outline-danger"
-                      (click)="deleteBook(book.id)"
-                      title="Delete Book">
-                      <i class="fa fa-trash"></i>
-                    </button>
+                    @if (isAdmin) {
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-outline-danger"
+                        (click)="deleteBook(book.id)"
+                        title="Delete Book">
+                        <i class="fa fa-trash"></i>
+                      </button>
+                    }
                   </div>
                 </td>
               </tr>

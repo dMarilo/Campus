@@ -2,6 +2,7 @@ import { Component, computed, inject, signal, effect } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { ClassesService } from '../classes.service';
+import { AuthService } from '../../auth/auth.service';
 
 @Component({
   selector: 'app-classes-table',
@@ -11,6 +12,9 @@ import { ClassesService } from '../classes.service';
 })
 export class ClassesTable {
   classesService = inject(ClassesService);
+  authService = inject(AuthService);
+  user = this.authService.getUser();
+  isStudent = this.user?.type === 'student';
   classes = computed(() => this.classesService.classesSignal() || []);
   searchTerm = signal<string>('');
   filterStatus = '';
@@ -62,7 +66,11 @@ export class ClassesTable {
   });
 
   constructor() {
-    this.classesService.getClasses();
+    if (this.isStudent && this.user?.profile?.id) {
+      this.classesService.getClassesByStudent(this.user.profile.id);
+    } else {
+      this.classesService.getClasses();
+    }
 
     effect(() => {
       const classes = this.classes();

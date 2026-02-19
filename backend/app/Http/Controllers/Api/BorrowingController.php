@@ -136,4 +136,64 @@ class BorrowingController extends Controller
             'data' => $borrowings,
         ]);
     }
+
+    /**
+     * Handles the borrowing of a book using student code and ISBN.
+     *
+     * This endpoint is designed for terminal use where:
+     *  - Student provides their student code
+     *  - Book is identified by ISBN
+     *  - System finds available book copy and creates borrowing
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function borrowByCodeAndIsbn(Request $request)
+    {
+        $validated = $request->validate([
+            'student_code' => ['required', 'string', 'exists:students,code'],
+            'isbn' => ['required', 'string', 'exists:book_copies,isbn'],
+        ]);
+
+        try {
+            // Find student by code
+            $student = \App\Models\Student::getStudentByCode($validated['student_code']);
+
+            if (!$student) {
+                return response()->json([
+                    'message' => 'Student not found.',
+                ], Response::HTTP_NOT_FOUND);
+            }
+
+            // Find an available book copy by ISBN
+            $bookCopy = \App\Models\BookCopy::where('isbn', $validated['isbn'])
+                ->where('status', \App\Models\BookCopy::STATUS_AVAILABLE)
+                ->first();
+
+            if (!$bookCopy) {
+                return response()->json([
+                    'message' => 'No available copy found for this ISBN.',
+                ], Response::HTTP_NOT_FOUND);
+            }
+
+            // Create borrowing
+            $borrowing = (new Borrowing)->borrow(
+                $student->id,
+                $bookCopy->id
+            );
+
+            // Load relationships for response
+            $borrowing->load(['student', 'bookCopy.book']);
+
+            return response()->json([
+                'message' => 'Book successfully borrowed.',
+                'data' => $borrowing,
+            ], Response::HTTP_CREATED);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+            ], Response::HTTP_BAD_REQUEST);
+        }
+    }
 }

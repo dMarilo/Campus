@@ -124,4 +124,17 @@ export class ClassesService {
         })
       );
   }
+
+  getClassesByStudent(studentId: number) {
+    this.http.get<ClassesResponse>(`${environment.apiBaseUrl}/classes/students/${studentId}/classes`).subscribe({
+      next: (response: any) => {
+        const classes = Array.isArray(response) ? response : (response.data || []);
+        this.classesSignal.set(classes);
+      },
+      error: (error) => {
+        console.error('Error fetching student classes', error);
+        this.classesSignal.set([]);
+      }
+    });
+  }
 }

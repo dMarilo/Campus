@@ -1,0 +1,183 @@
+<div class="session-preview-container">
+  <div class="container py-4">
+    <!-- Header with back button -->
+    <div class="mb-4">
+      <button class="btn btn-link text-decoration-none p-0" routerLink="/sessions">
+        <i class="fa fa-arrow-left me-2"></i>
+        <span>Back to Sessions</span>
+      </button>
+    </div>
+
+    @if (session()) {
+      <div class="row g-4">
+        <!-- Left Column - Session Info -->
+        <div class="col-lg-4">
+          <div class="card shadow-lg border-0 sticky-top" style="top: 20px;">
+            <!-- Session Header -->
+            <div class="card-header bg-primary text-white text-center py-4">
+              <i class="fa fa-calendar-check fa-3x mb-2"></i>
+              <h4 class="mb-1 fw-bold">{{ session()!.course_class?.course?.name }}</h4>
+              <p class="mb-0 opacity-75">{{ session()!.course_class?.course?.code }}</p>
+            </div>
+
+            <div class="card-body">
+              <!-- Status Badge -->
+              <div class="text-center mb-4">
+                <span
+                  class="badge px-3 py-2"
+                  [class.bg-success]="session()!.status === 'ongoing'"
+                  [class.bg-secondary]="session()!.status === 'finished'"
+                  [class.bg-info]="session()!.status === 'scheduled'">
+                  <i class="fa fa-circle me-1"></i>
+                  {{ session()!.status | titlecase }}
+                </span>
+              </div>
+
+              <!-- Quick Stats -->
+              <div class="row g-3 text-center mb-4">
+                <div class="col-4">
+                  <div class="bg-success bg-opacity-10 rounded p-3">
+                    <h5 class="mb-0 fw-bold text-success">{{ presentCount }}</h5>
+                    <small class="text-muted">Present</small>
+                  </div>
+                </div>
+                <div class="col-4">
+                  <div class="bg-danger bg-opacity-10 rounded p-3">
+                    <h5 class="mb-0 fw-bold text-danger">{{ absentCount }}</h5>
+                    <small class="text-muted">Absent</small>
+                  </div>
+                </div>
+                <div class="col-4">
+                  <div class="bg-primary bg-opacity-10 rounded p-3">
+                    <h5 class="mb-0 fw-bold text-primary">{{ session()!.students?.length || 0 }}</h5>
+                    <small class="text-muted">Total</small>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Session Details -->
+              <div class="detail-item mb-3">
+                <label class="detail-label">Classroom</label>
+                <p class="detail-value">{{ session()!.classroom?.name || '—' }}</p>
+              </div>
+              <div class="detail-item mb-3">
+                <label class="detail-label">Started At</label>
+                <p class="detail-value">{{ session()!.starts_at | date:'medium' }}</p>
+              </div>
+              @if (session()!.ends_at) {
+                <div class="detail-item mb-3">
+                  <label class="detail-label">Ended At</label>
+                  <p class="detail-value">{{ session()!.ends_at | date:'medium' }}</p>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="col-lg-8">
+          <!-- Professor Card -->
+          <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+              <h4 class="mb-0 fw-bold">
+                <i class="fa fa-chalkboard-teacher text-primary me-2"></i>Professor
+              </h4>
+            </div>
+            <div class="card-body p-4">
+              @if (session()!.professor) {
+                <div class="d-flex align-items-center">
+                  <img
+                    [src]="'https://ui-avatars.com/api/?name=' + session()!.professor!.first_name + '+' + session()!.professor!.last_name + '&size=64&background=667eea&color=fff&bold=true'"
+                    alt="Professor Avatar"
+                    class="rounded-circle me-3"
+                    width="64"
+                    height="64"
+                  />
+                  <div>
+                    <h5 class="mb-1 fw-bold">
+                      @if (session()!.professor!.academic_title) {
+                        {{ session()!.professor!.academic_title }}
+                      }
+                      {{ session()!.professor!.first_name }} {{ session()!.professor!.last_name }}
+                    </h5>
+                    <p class="text-muted mb-0">{{ session()!.professor!.code }}</p>
+                    <p class="text-muted mb-0">
+                      <i class="fa fa-building me-1"></i>{{ session()!.professor!.department }}
+                    </p>
+                  </div>
+                </div>
+              } @else {
+                <p class="text-muted mb-0">No professor information available</p>
+              }
+            </div>
+          </div>
+
+          <!-- Student Attendance -->
+          <div class="card shadow-sm border-0">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+              <h4 class="mb-0 fw-bold">
+                <i class="fa fa-users text-primary me-2"></i>Student Attendance
+              </h4>
+            </div>
+            <div class="card-body p-4">
+              @if (session()!.students && session()!.students!.length > 0) {
+                <div class="table-responsive">
+                  <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                      <tr>
+                        <th scope="col" style="width: 50px">#</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Index</th>
+                        <th scope="col" class="text-center" style="width: 120px">Status</th>
+                        <th scope="col" class="text-center" style="width: 140px">Checked In</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (student of session()!.students; track student.id) {
+                        <tr>
+                          <th scope="row" class="text-muted">{{ student.id }}</th>
+                          <td class="fw-semibold">{{ student.first_name }} {{ student.last_name }}</td>
+                          <td>{{ student.index_number }}</td>
+                          <td class="text-center">
+                            @if (student.checked_in) {
+                              <span
+                                class="badge"
+                                [class.bg-success]="student.status === 'present'"
+                                [class.bg-warning]="student.status === 'late'">
+                                {{ student.status || 'Present' }}
+                              </span>
+                            } @else {
+                              <span class="badge bg-danger">Absent</span>
+                            }
+                          </td>
+                          <td class="text-center text-muted">
+                            {{ student.checked_in_at ? (student.checked_in_at | date:'shortTime') : '—' }}
+                          </td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              } @else {
+                <div class="text-center py-4">
+                  <i class="fa fa-user-graduate fa-3x text-muted mb-3"></i>
+                  <p class="text-muted mb-0">No student attendance records</p>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    } @else {
+      <!-- Loading / Not Found -->
+      <div class="card shadow-sm border-0">
+        <div class="card-body text-center py-5">
+          <div class="spinner-border text-primary mb-3" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <h5 class="text-muted">Loading session details...</h5>
+        </div>
+      </div>
+    }
+  </div>
+</div>

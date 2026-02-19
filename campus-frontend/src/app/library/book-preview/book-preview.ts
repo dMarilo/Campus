@@ -2,6 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { LibraryService } from '../library.service';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
+import { AuthService } from '../../auth/auth.service';
 
 @Component({
   selector: 'app-book-preview',
@@ -13,6 +14,8 @@ export class BookPreview {
   libraryService = inject(LibraryService);
   activatedRoute = inject(ActivatedRoute);
   router = inject(Router);
+  authService = inject(AuthService);
+  isAdmin = this.authService.isAdmin();
 
   book = computed(() => this.libraryService.getBook(Number(this.activatedRoute.snapshot.params['id'])));
 
