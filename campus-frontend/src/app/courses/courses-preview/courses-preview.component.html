@@ -82,9 +82,18 @@
 
               <!-- Action Buttons -->
               <div class="d-grid gap-2">
-                <button class="btn btn-primary btn-lg">
-                  <i class="fa fa-edit me-2"></i>Edit Course
-                </button>
+                @if (authService.isAdmin()) {
+                  <button
+                    class="btn btn-primary btn-lg"
+                    routerLink="/courses/edit/{{ course()!.id }}">
+                    <i class="fa fa-edit me-2"></i>Edit Course
+                  </button>
+                  <button
+                    class="btn btn-outline-danger"
+                    (click)="deleteCourse()">
+                    <i class="fa fa-trash me-2"></i>Delete Course
+                  </button>
+                }
                 <button class="btn btn-outline-secondary">
                   <i class="fa fa-users me-2"></i>View Enrolled Students
                 </button>

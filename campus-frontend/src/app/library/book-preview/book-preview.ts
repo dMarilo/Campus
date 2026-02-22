@@ -3,6 +3,7 @@ import { LibraryService } from '../library.service';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { AuthService } from '../../auth/auth.service';
+import { ConfirmModalService } from '../../shared/confirm-modal/confirm-modal.service';
 
 @Component({
   selector: 'app-book-preview',
@@ -15,6 +16,7 @@ export class BookPreview {
   activatedRoute = inject(ActivatedRoute);
   router = inject(Router);
   authService = inject(AuthService);
+  confirmModal = inject(ConfirmModalService);
   isAdmin = this.authService.isAdmin();
 
   book = computed(() => this.libraryService.getBook(Number(this.activatedRoute.snapshot.params['id'])));
@@ -38,20 +40,25 @@ export class BookPreview {
     });
   }
 
-  deleteBook() {
+  async deleteBook() {
     const bookId = Number(this.activatedRoute.snapshot.params['id']);
-    const bookTitle = this.book()?.title;
+    const bookTitle = this.book()?.title ?? 'this book';
 
-    if (confirm(`Are you sure you want to permanently delete "${bookTitle}"?\n\nThis action cannot be undone.`)) {
-      this.libraryService.deleteBook(bookId).subscribe({
-        next: () => {
-          this.router.navigate(['/library']);
-        },
-        error: (error) => {
-          console.error('Error deleting book:', error);
-          alert('Failed to delete book. Please try again.');
-        }
-      });
-    }
+    const confirmed = await this.confirmModal.confirm({
+      title: 'Delete Book',
+      itemName: bookTitle,
+      message: 'This action cannot be undone.',
+    });
+    if (!confirmed) return;
+
+    this.libraryService.deleteBook(bookId).subscribe({
+      next: () => {
+        this.router.navigate(['/library']);
+      },
+      error: (error) => {
+        console.error('Error deleting book:', error);
+        alert('Failed to delete book. Please try again.');
+      }
+    });
   }
 }

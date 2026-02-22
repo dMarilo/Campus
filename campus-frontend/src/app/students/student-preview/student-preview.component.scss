@@ -148,6 +148,44 @@
   }
 }
 
+// Edit Modal
+.modal-backdrop-custom {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1040;
+}
+
+.edit-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1050;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.edit-modal-dialog {
+  width: 100%;
+  max-width: 620px;
+
+  .card {
+    border-radius: 1rem;
+    overflow: visible;
+  }
+
+  .card-header {
+    border-radius: 1rem 1rem 0 0;
+  }
+}
+
+.section-heading {
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+}
+
 // Responsive
 @media (max-width: 991px) {
   .avatar-img {

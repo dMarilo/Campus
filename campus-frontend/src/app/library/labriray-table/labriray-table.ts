@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { LibraryService } from '../library.service';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
+import { ConfirmModalService } from '../../shared/confirm-modal/confirm-modal.service';
 
 @Component({
   selector: 'app-labriray-table',
@@ -14,6 +15,7 @@ import { AuthService } from '../../auth/auth.service';
 export class LabrirayTable {
   libraryService = inject(LibraryService);
   authService = inject(AuthService);
+  confirmModal = inject(ConfirmModalService);
   isAdmin = this.authService.isAdmin();
   books = computed(() => this.libraryService.booksSignal());
   searchTerm = signal<string>('');
@@ -30,7 +32,6 @@ export class LabrirayTable {
   });
 
   constructor() {
-    // Watch for when books are loaded
     effect(() => {
       if (this.books().length > 0) {
         this.isLoading.set(false);
@@ -38,18 +39,22 @@ export class LabrirayTable {
     });
   }
 
-  deleteBook(id: number) {
+  async deleteBook(id: number) {
     const book = this.books().find(b => b.id === id);
-    if (confirm(`Are you sure you want to delete "${book?.title}"?`)) {
-      this.libraryService.deleteBook(id).subscribe({
-        next: () => {
-          console.log('Book deleted successfully');
-        },
-        error: (error) => {
-          console.error('Error deleting book:', error);
-          alert('Failed to delete book');
-        }
-      });
-    }
+    const confirmed = await this.confirmModal.confirm({
+      title: 'Delete Book',
+      itemName: book?.title ?? '',
+      message: 'This action cannot be undone.',
+    });
+    if (!confirmed) return;
+
+    this.libraryService.deleteBook(id).subscribe({
+      next: () => {
+        this.libraryService.getBooks();
+      },
+      error: (err) => {
+        alert(err?.error?.message ?? 'Failed to delete book.');
+      },
+    });
   }
 }

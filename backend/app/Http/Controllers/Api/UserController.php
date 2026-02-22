@@ -100,6 +100,73 @@ class UserController extends Controller
     }
 
     /**
+     * List all users (Admin Only).
+     */
+    public function index(Request $request)
+    {
+        $query = User::query();
+
+        if ($request->has('type') && $request->type) {
+            $query->where('type', $request->type);
+        }
+
+        if ($request->has('search') && $request->search) {
+            $search = $request->search;
+            $query->where('email', 'like', "%{$search}%");
+        }
+
+        $users = $query->orderBy('created_at', 'desc')->get();
+
+        return response()->json(['data' => $users]);
+    }
+
+    /**
+     * Get a single user by ID (Admin Only).
+     */
+    public function show(int $id)
+    {
+        $user = User::findOrFail($id);
+
+        return response()->json(['data' => $user]);
+    }
+
+    /**
+     * Update a user (Admin Only).
+     */
+    public function update(Request $request, int $id)
+    {
+        $user = User::findOrFail($id);
+
+        $validated = $request->validate([
+            'email'  => ['sometimes', 'email', 'unique:users,email,' . $id],
+            'type'   => ['sometimes', 'string', 'in:' . implode(',', [
+                User::TYPE_ADMIN,
+                User::TYPE_PROFESSOR,
+                User::TYPE_STUDENT,
+            ])],
+            'status' => ['sometimes', 'string'],
+        ]);
+
+        $user->update($validated);
+
+        return response()->json([
+            'message' => 'User updated successfully.',
+            'data'    => $user,
+        ]);
+    }
+
+    /**
+     * Delete a user (Admin Only).
+     */
+    public function destroy(int $id)
+    {
+        $user = User::findOrFail($id);
+        $user->delete();
+
+        return response()->json(['message' => 'User deleted successfully.']);
+    }
+
+    /**
      * Get the authenticated user's profile with full details.
      *
      * This endpoint:
@@ -145,6 +212,68 @@ class UserController extends Controller
         return response()->json([
             'data' => $response,
         ]);
+    }
+
+    /**
+     * Update the authenticated user's own profile fields.
+     *
+     * Students can update: first_name, last_name, phone, date_of_birth, gender.
+     * Professors can update: first_name, last_name, phone, office_location, office_hours.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function updateProfile(Request $request)
+    {
+        $user = auth()->user();
+
+        if ($user->type === User::TYPE_STUDENT) {
+            $user->load('student');
+
+            if (!$user->student) {
+                return response()->json(['message' => 'Student profile not found.'], Response::HTTP_NOT_FOUND);
+            }
+
+            $validated = $request->validate([
+                'first_name'    => ['sometimes', 'string', 'max:255'],
+                'last_name'     => ['sometimes', 'string', 'max:255'],
+                'phone'         => ['sometimes', 'nullable', 'string', 'max:50'],
+                'date_of_birth' => ['sometimes', 'nullable', 'date'],
+                'gender'        => ['sometimes', 'nullable', 'string', 'in:male,female,other'],
+            ]);
+
+            $user->student->update($validated);
+
+            return response()->json([
+                'message' => 'Profile updated successfully.',
+                'data'    => $user->student->fresh(),
+            ]);
+        }
+
+        if ($user->type === User::TYPE_PROFESSOR) {
+            $user->load('professor');
+
+            if (!$user->professor) {
+                return response()->json(['message' => 'Professor profile not found.'], Response::HTTP_NOT_FOUND);
+            }
+
+            $validated = $request->validate([
+                'first_name'      => ['sometimes', 'string', 'max:255'],
+                'last_name'       => ['sometimes', 'string', 'max:255'],
+                'phone'           => ['sometimes', 'nullable', 'string', 'max:50'],
+                'office_location' => ['sometimes', 'nullable', 'string', 'max:255'],
+                'office_hours'    => ['sometimes', 'nullable', 'string', 'max:255'],
+            ]);
+
+            $user->professor->update($validated);
+
+            return response()->json([
+                'message' => 'Profile updated successfully.',
+                'data'    => $user->professor->fresh(),
+            ]);
+        }
+
+        return response()->json(['message' => 'Profile updates are not supported for this account type.'], Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     /**

@@ -1,0 +1,207 @@
+.guide-container {
+  background: var(--bs-body-bg);
+  min-height: 100vh;
+}
+
+/* ── Hero ── */
+.guide-hero {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-bottom: 1px solid rgba(255,255,255,.1);
+}
+
+.badge-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: opacity .15s, transform .15s;
+
+  &:hover { opacity: .85; transform: translateY(-1px); }
+
+  &.badge-success   { background: rgba(25,135,84,.18);   color: #fff; }
+  &.badge-primary   { background: rgba(255,255,255,.2);  color: #fff; }
+  &.badge-info      { background: rgba(13,202,240,.18);  color: #fff; }
+  &.badge-warning   { background: rgba(255,193,7,.22);   color: #fff; }
+  &.badge-secondary { background: rgba(255,255,255,.12); color: #fff; }
+  &.badge-danger    { background: rgba(220,53,69,.22);   color: #fff; }
+}
+
+/* ── TOC ── */
+.toc-card {
+  background: var(--bs-card-bg);
+  border: 1px solid var(--bs-border-color);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+}
+
+.toc-title {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  color: var(--bs-secondary-color);
+  margin-bottom: .75rem;
+}
+
+.toc-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  li + li { margin-top: .25rem; }
+}
+
+.toc-link {
+  display: block;
+  padding: 5px 8px;
+  border-radius: 6px;
+  font-size: .875rem;
+  color: var(--bs-body-color);
+  cursor: pointer;
+  transition: background .15s, color .15s;
+
+  &:hover {
+    background: rgba(var(--bs-primary-rgb), 0.1);
+    color: var(--bs-primary);
+  }
+}
+
+/* ── Sections ── */
+.guide-section { scroll-margin-top: 24px; }
+
+.section-tag {
+  display: inline-block;
+  padding: 3px 12px;
+  border-radius: 999px;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  margin-bottom: .75rem;
+}
+
+.section-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--bs-body-color);
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  margin-bottom: .75rem;
+}
+
+.section-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.section-lead {
+  font-size: 1.05rem;
+  color: var(--bs-secondary-color);
+  margin-bottom: 1.5rem;
+  line-height: 1.7;
+}
+
+/* ── Feature blocks ── */
+.feature-block {
+  background: var(--bs-card-bg);
+  border: 1px solid var(--bs-border-color);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1rem;
+
+  h5 {
+    font-weight: 700;
+    margin-bottom: .5rem;
+    font-size: 1rem;
+  }
+
+  p { color: var(--bs-body-color); margin-bottom: .5rem; }
+}
+
+.guide-list {
+  padding-left: 1.25rem;
+  color: var(--bs-body-color);
+
+  li { margin-bottom: .35rem; line-height: 1.6; }
+}
+
+/* ── Callouts ── */
+.info-callout {
+  background: var(--bs-warning-bg-subtle);
+  border-left: 4px solid var(--bs-warning);
+  border-radius: 0 8px 8px 0;
+  padding: 1rem 1.25rem;
+  margin-top: 1rem;
+  font-size: .9rem;
+  color: var(--bs-body-color);
+
+  &.info-callout--warning { border-color: #fd7e14; }
+}
+
+/* ── Overview chips ── */
+.overview-chip {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  background: var(--bs-card-bg);
+  border: 1px solid var(--bs-border-color);
+  border-radius: 10px;
+  padding: .75rem 1rem;
+  cursor: pointer;
+  transition: box-shadow .15s, border-color .15s;
+
+  &:hover {
+    box-shadow: 0 2px 12px rgba(102,126,234,.12);
+    border-color: var(--bs-primary);
+  }
+}
+
+.chip-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  font-size: .95rem;
+  flex-shrink: 0;
+}
+
+/* ── Status flow ── */
+.status-flow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .25rem;
+  margin-top: .75rem;
+}
+
+.status-pill {
+  padding: 4px 14px;
+  border-radius: 999px;
+  font-size: .8rem;
+  font-weight: 600;
+}
+
+/* ── Footer CTA ── */
+.guide-footer-cta {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16px;
+  padding: 2.5rem;
+  color: #fff;
+  text-align: center;
+  margin-top: 2rem;
+
+  h4 { color: #fff; }
+  p  { color: rgba(255,255,255,.75); }
+}

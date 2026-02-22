@@ -1,6 +1,6 @@
 
 .dashboard-container {
-  background: #f8f9fa;
+  background: var(--bs-body-bg);
 }
 
 .hero-section {
@@ -33,20 +33,7 @@
     background-clip: text;
   }
 
-  .btn-primary {
-    background: white;
-    color: #667eea;
-    border: none;
-    font-weight: 600;
-    transition: all 0.3s ease;
-
-    &:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-      background: #f8f9fa;
-    }
-  }
-
+  // These buttons sit on the dark purple hero — keep white intentionally
   .btn-outline-primary {
     color: white;
     border-color: white;
@@ -71,35 +58,17 @@
 
   .floating-card {
     position: absolute;
-    background: white;
+    background: var(--bs-card-bg);
+    border: 1px solid var(--bs-border-color);
     border-radius: 1rem;
     padding: 2rem;
     box-shadow: 0 20px 60px rgba(0,0,0,0.3);
     animation: float 3s ease-in-out infinite;
 
-    &.card-1 {
-      top: 10%;
-      left: 10%;
-      animation-delay: 0s;
-    }
-
-    &.card-2 {
-      top: 10%;
-      right: 10%;
-      animation-delay: 0.5s;
-    }
-
-    &.card-3 {
-      bottom: 10%;
-      left: 10%;
-      animation-delay: 1s;
-    }
-
-    &.card-4 {
-      bottom: 10%;
-      right: 10%;
-      animation-delay: 1.5s;
-    }
+    &.card-1 { top: 10%; left: 10%; animation-delay: 0s; }
+    &.card-2 { top: 10%; right: 10%; animation-delay: 0.5s; }
+    &.card-3 { bottom: 10%; left: 10%; animation-delay: 1s; }
+    &.card-4 { bottom: 10%; right: 10%; animation-delay: 1.5s; }
   }
 
   .central-circle {
@@ -117,34 +86,24 @@
 }
 
 @keyframes float {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-20px);
-  }
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-20px); }
 }
 
 @keyframes pulse {
-  0%, 100% {
-    transform: scale(1);
-    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-  }
-  50% {
-    transform: scale(1.05);
-    box-shadow: 0 25px 70px rgba(0,0,0,0.4);
-  }
+  0%, 100% { transform: scale(1);    box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+  50%       { transform: scale(1.05); box-shadow: 0 25px 70px rgba(0,0,0,0.4); }
 }
 
 .features-section {
-  background: white;
+  background: var(--bs-body-bg);
 
   .feature-card {
     padding: 2rem;
     border-radius: 1rem;
-    background: white;
-    border: 1px solid #e9ecef;
-    transition: all 0.3s ease;
+    background: var(--bs-card-bg);
+    border: 1px solid var(--bs-border-color);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
     height: 100%;
 
     &:hover {
@@ -165,7 +124,7 @@
 
     h4 {
       font-weight: 600;
-      color: #212529;
+      color: var(--bs-body-color);
     }
 
     p {
@@ -176,28 +135,27 @@
 }
 
 .stats-section {
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  background: var(--bs-tertiary-bg);
 
   .stat-card {
     padding: 2rem;
     border-radius: 1rem;
-    background: white;
+    background: var(--bs-card-bg);
+    border: 1px solid var(--bs-border-color);
     box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    transition: all 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 
     &:hover {
       transform: translateY(-5px);
       box-shadow: 0 15px 40px rgba(0,0,0,0.15);
     }
 
-    h2 {
-      font-weight: 700;
-    }
+    h2 { font-weight: 700; }
   }
 }
 
 .cta-section {
-  background: white;
+  background: var(--bs-body-bg);
   padding: 4rem 0;
 
   .cta-card {
@@ -225,14 +183,8 @@
     height: 400px;
     margin-top: 3rem;
 
-    .floating-card {
-      padding: 1.5rem;
-    }
-
-    .central-circle {
-      width: 140px;
-      height: 140px;
-    }
+    .floating-card { padding: 1.5rem; }
+    .central-circle { width: 140px; height: 140px; }
   }
 }
 
@@ -240,9 +192,7 @@
   .hero-section .hero-content {
     text-align: center;
 
-    .d-flex {
-      justify-content: center;
-    }
+    .d-flex { justify-content: center; }
   }
 
   .hero-illustration {
@@ -250,19 +200,13 @@
 
     .floating-card {
       padding: 1rem;
-
-      i {
-        font-size: 1.5rem !important;
-      }
+      i { font-size: 1.5rem !important; }
     }
 
     .central-circle {
       width: 100px;
       height: 100px;
-
-      i {
-        font-size: 2rem !important;
-      }
+      i { font-size: 2rem !important; }
     }
   }
 }

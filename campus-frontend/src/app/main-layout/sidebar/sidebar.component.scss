@@ -2,14 +2,14 @@
   border-radius: 0.5rem;
   padding: 0.75rem 1rem;
   margin-bottom: 0.25rem;
-  transition: all 0.3s ease;
+  transition: background-color 0.2s ease, color 0.2s ease;
 
   &:hover {
-    background-color: rgba(13, 110, 253, 0.1);
+    background-color: rgba(var(--bs-primary-rgb), 0.1);
   }
 
   &.active {
-    background-color: #0d6efd;
+    background-color: var(--bs-primary);
     color: white !important;
 
     i {
@@ -20,21 +20,21 @@
   i {
     width: 20px;
     text-align: center;
-    color: #6c757d;
+    color: var(--bs-secondary-color);
   }
 }
 
 .btn-outline-primary {
   border-radius: 0.5rem;
   padding: 0.75rem 1rem;
-  transition: all 0.3s ease;
+  transition: background-color 0.2s ease;
 
   &:hover {
-    background-color: rgba(13, 110, 253, 0.1);
+    background-color: rgba(var(--bs-primary-rgb), 0.1);
   }
 
   img {
-    border: 2px solid #0d6efd;
+    border: 2px solid var(--bs-primary);
   }
 }
 
@@ -47,16 +47,16 @@
 
 .dropdown-item {
   padding: 0.75rem 1rem;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease, padding-left 0.2s ease;
 
   &:hover {
-    background-color: #f8f9fa;
+    background-color: var(--bs-tertiary-bg);
     padding-left: 1.25rem;
   }
 
   &.text-danger:hover {
-    background-color: #fff5f5;
-    color: #dc3545 !important;
+    background-color: var(--bs-danger-bg-subtle);
+    color: var(--bs-danger) !important;
   }
 
   i {
@@ -69,14 +69,40 @@
   margin: 0.5rem 0;
 }
 
-// Smooth animations
-* {
-  transition: all 0.3s ease;
+// Dark mode toggle switch
+.theme-switch {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  background: var(--bs-secondary-bg);
+  border-radius: 999px;
+  transition: background 0.25s ease;
+  flex-shrink: 0;
+
+  &.active {
+    background: var(--bs-primary);
+  }
+
+  .theme-switch-thumb {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 14px;
+    height: 14px;
+    background: #fff;
+    border-radius: 50%;
+    transition: transform 0.25s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  }
+
+  &.active .theme-switch-thumb {
+    transform: translateX(16px);
+  }
 }
 
 // Logo hover effect
 a[routerLink="/dashboard"] {
-  transition: all 0.3s ease;
+  transition: transform 0.2s ease;
 
   &:hover {
     transform: scale(1.02);

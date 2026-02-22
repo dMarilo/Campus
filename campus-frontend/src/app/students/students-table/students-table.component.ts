@@ -27,7 +27,7 @@ export class StudentsTable {
           student.first_name.toLowerCase().includes(term) ||
           student.last_name.toLowerCase().includes(term) ||
           student.email.toLowerCase().includes(term) ||
-          student.index_number.toLowerCase().includes(term)
+          student.student_index?.toLowerCase().includes(term)
       );
     }
 

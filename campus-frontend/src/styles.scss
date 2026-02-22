@@ -25,3 +25,19 @@ body {
 body {
   overflow: hidden;
 }
+
+/* ── Dark mode: fix hardcoded Bootstrap utility classes ── */
+[data-bs-theme="dark"] {
+  // bg-white is not theme-aware — remap to the card surface colour
+  .bg-white {
+    background-color: var(--bs-card-bg) !important;
+    color: var(--bs-body-color) !important;
+  }
+
+  // Search-bar icon spans use bg-white but need to match the input
+  .input-group-text.bg-white {
+    background-color: var(--bs-body-secondary-bg) !important;
+    border-color: var(--bs-border-color) !important;
+    color: var(--bs-body-color) !important;
+  }
+}

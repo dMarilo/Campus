@@ -61,4 +61,9 @@ export class ProfileService {
     return this.http.get<{data: UserProfile}>(`${environment.apiBaseUrl}/profile`)
       .pipe(map(response => response.data));
   }
+
+  updateProfile(data: Partial<StudentProfile> | Partial<ProfessorProfile>): Observable<StudentProfile | ProfessorProfile> {
+    return this.http.put<{message: string; data: StudentProfile | ProfessorProfile}>(`${environment.apiBaseUrl}/profile`, data)
+      .pipe(map(response => response.data));
+  }
 }

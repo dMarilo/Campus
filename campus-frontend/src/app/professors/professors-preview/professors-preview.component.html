@@ -186,46 +186,6 @@
             </div>
           </div>
 
-          <!-- System Information -->
-          @if (professor()!.created_at) {
-            <div class="card shadow-sm border-0">
-              <div class="card-header bg-white border-0 pt-4 px-4">
-                <h4 class="mb-0 fw-bold">
-                  <i class="fa fa-info-circle text-primary me-2"></i>System Information
-                </h4>
-              </div>
-              <div class="card-body p-4">
-                <div class="row g-4">
-                  <div class="col-md-6">
-                    <div class="detail-item">
-                      <label class="detail-label">Created At</label>
-                      <p class="detail-value">{{ professor()!.created_at | date:'medium' }}</p>
-                    </div>
-                  </div>
-                  <div class="col-md-6">
-                    <div class="detail-item">
-                      <label class="detail-label">Last Updated</label>
-                      <p class="detail-value">{{ professor()!.updated_at | date:'medium' }}</p>
-                    </div>
-                  </div>
-                  <div class="col-md-6">
-                    <div class="detail-item">
-                      <label class="detail-label">Professor ID</label>
-                      <p class="detail-value">#{{ professor()!.id }}</p>
-                    </div>
-                  </div>
-                  @if (professor()!.user_id) {
-                    <div class="col-md-6">
-                      <div class="detail-item">
-                        <label class="detail-label">User ID</label>
-                        <p class="detail-value">#{{ professor()!.user_id }}</p>
-                      </div>
-                    </div>
-                  }
-                </div>
-              </div>
-            </div>
-          }
         </div>
       </div>
     } @else {

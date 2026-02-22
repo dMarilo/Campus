@@ -2,6 +2,8 @@ import { Component, computed, inject, signal, effect } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { CoursesService } from '../courses.service';
+import { AuthService } from '../../auth/auth.service';
+import { ConfirmModalService } from '../../shared/confirm-modal/confirm-modal.service';
 
 @Component({
   selector: 'app-courses-table',
@@ -11,6 +13,8 @@ import { CoursesService } from '../courses.service';
 })
 export class CoursesTable {
   coursesService = inject(CoursesService);
+  authService = inject(AuthService);
+  confirmModal = inject(ConfirmModalService);
   courses = computed(() => this.coursesService.coursesSignal() || []);
   searchTerm = signal<string>('');
   filterDepartment = '';
@@ -75,5 +79,23 @@ export class CoursesTable {
 
   toggleViewMode(mode: 'table' | 'cards') {
     this.viewMode.set(mode);
+  }
+
+  async deleteCourse(id: number, name: string) {
+    const confirmed = await this.confirmModal.confirm({
+      title: 'Delete Course',
+      itemName: name,
+      message: 'This action cannot be undone.',
+    });
+    if (!confirmed) return;
+
+    this.coursesService.deleteCourse(id).subscribe({
+      next: () => {
+        this.coursesService.getCourses();
+      },
+      error: (err) => {
+        alert(err?.error?.message ?? 'Failed to delete course.');
+      },
+    });
   }
 }

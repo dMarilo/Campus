@@ -21,12 +21,14 @@ import { StudentPreview } from './students/student-preview/student-preview.compo
 import { CoursesLayout } from './courses/courses-layout/courses-layout.component';
 import { CoursesPreview } from './courses/courses-preview/courses-preview.component';
 import { CoursesTable } from './courses/courses-table/courses-table.component';
+import { CourseForm } from './courses/course-form/course-form.component';
 import { ProfessorsLayout } from './professors/professors-layout/professors-layout.component';
 import { ProfessorsTable } from './professors/professors-table/professors-table.component';
 import { ProfessorsPreview } from './professors/professors-preview/professors-preview.component';
 import { ClassesLayout } from './classes/classes-layout/classes-layout.component';
 import { ClassesTable } from './classes/classes-table/classes-table.component';
 import { ClassesPreview } from './classes/classes-preview/classes-preview.component';
+import { ClassForm } from './classes/class-form/class-form.component';
 import { ExamsLayout } from './exams/exams-layout/exams-layout.component';
 import { ExamsTable } from './exams/exams-table/exams-table.component';
 import { ExamsPreview } from './exams/exams-preview/exams-preview.component';
@@ -35,6 +37,10 @@ import { ProfilePreview } from './profile/profile-preview/profile-preview.compon
 import { SessionsLayout } from './sessions/sessions-layout/sessions-layout.component';
 import { SessionsTable } from './sessions/sessions-table/sessions-table.component';
 import { SessionsPreview } from './sessions/sessions-preview/sessions-preview.component';
+import { UsersLayout } from './users/users-layout/users-layout.component';
+import { UsersTable } from './users/users-table/users-table.component';
+import { UserForm } from './users/user-form/user-form.component';
+import { GuideComponent } from './guide/guide.component';
 
 export const routes: Routes = [
   // Public routes (NO authentication required)
@@ -90,14 +96,10 @@ export const routes: Routes = [
         path: 'courses',
         component: CoursesLayout,
         children: [
-          {
-            path: '',
-            component: CoursesTable
-          },
-          {
-            path: ':id',
-            component: CoursesPreview
-          }
+          { path: '', component: CoursesTable },
+          { path: 'add', component: CourseForm, canActivate: [adminGuard] },
+          { path: 'edit/:id', component: CourseForm, canActivate: [adminGuard] },
+          { path: ':id', component: CoursesPreview },
         ]
       },
       { path: 'dorm', component: LabrirayLayout },
@@ -106,6 +108,7 @@ export const routes: Routes = [
         component: ClassesLayout,
         children: [
           { path: '', component: ClassesTable },
+          { path: 'add', component: ClassForm, canActivate: [adminGuard] },
           { path: ':id', component: ClassesPreview },
         ],
       },
@@ -136,11 +139,25 @@ export const routes: Routes = [
         ],
       },
       {
+        path: 'users',
+        component: UsersLayout,
+        canActivate: [adminGuard],
+        children: [
+          { path: '', component: UsersTable },
+          { path: 'add', component: UserForm },
+          { path: 'edit/:id', component: UserForm },
+        ],
+      },
+      {
         path: 'profile',
         component: ProfileLayout,
         children: [
           { path: '', component: ProfilePreview },
         ],
+      },
+      {
+        path: 'guide',
+        component: GuideComponent,
       },
     ],
   },

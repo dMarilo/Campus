@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { CoursesService } from '../courses.service';
+import { AuthService } from '../../auth/auth.service';
 
 @Component({
   selector: 'app-courses-layout',
@@ -9,4 +10,6 @@ import { CoursesService } from '../courses.service';
   templateUrl: './courses-layout.component.html',
   styleUrl: './courses-layout.component.scss',
 })
-export class CoursesLayout {}
+export class CoursesLayout {
+  authService = inject(AuthService);
+}

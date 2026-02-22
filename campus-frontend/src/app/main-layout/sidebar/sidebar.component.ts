@@ -2,6 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { NgbDropdown, NgbDropdownMenu, NgbDropdownItem, NgbDropdownToggle } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from '../../auth/auth.service';
+import { ThemeService } from '../../shared/theme.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -11,6 +12,7 @@ import { AuthService } from '../../auth/auth.service';
 })
 export class SidebarComponent implements OnInit {
   authService = inject(AuthService);
+  themeService = inject(ThemeService);
   router = inject(Router);
   user: any = null;
 

@@ -135,12 +135,22 @@
                         title="View Details">
                         <i class="fa fa-eye"></i>
                       </button>
-                      <button
-                        type="button"
-                        class="btn btn-sm btn-outline-secondary"
-                        title="Edit Course">
-                        <i class="fa fa-edit"></i>
-                      </button>
+                      @if (authService.isAdmin()) {
+                        <button
+                          type="button"
+                          class="btn btn-sm btn-outline-secondary"
+                          routerLink="/courses/edit/{{ course.id }}"
+                          title="Edit Course">
+                          <i class="fa fa-edit"></i>
+                        </button>
+                        <button
+                          type="button"
+                          class="btn btn-sm btn-outline-danger"
+                          (click)="deleteCourse(course.id, course.name)"
+                          title="Delete Course">
+                          <i class="fa fa-trash"></i>
+                        </button>
+                      }
                     </div>
                   </td>
                 </tr>
@@ -246,11 +256,20 @@
                       routerLink="/courses/{{ course.id }}">
                       <i class="fa fa-eye me-1"></i>View Details
                     </button>
-                    <button
-                      class="btn btn-sm btn-outline-secondary"
-                      title="Edit Course">
-                      <i class="fa fa-edit"></i>
-                    </button>
+                    @if (authService.isAdmin()) {
+                      <button
+                        class="btn btn-sm btn-outline-secondary"
+                        routerLink="/courses/edit/{{ course.id }}"
+                        title="Edit Course">
+                        <i class="fa fa-edit"></i>
+                      </button>
+                      <button
+                        class="btn btn-sm btn-outline-danger"
+                        (click)="deleteCourse(course.id, course.name)"
+                        title="Delete Course">
+                        <i class="fa fa-trash"></i>
+                      </button>
+                    }
                   </div>
                 </div>
               </div>

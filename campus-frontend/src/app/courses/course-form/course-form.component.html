@@ -1,0 +1,199 @@
+<div class="container mt-5 mb-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card shadow-lg border-0 rounded-3">
+        <div class="card-header bg-gradient text-white py-4 border-0">
+          <div class="d-flex align-items-center">
+            <i class="fa fa-graduation-cap fa-2x me-3"></i>
+            <h2 class="mb-0 fw-bold">
+              {{ isEditMode() ? 'Edit Course' : 'Add New Course' }}
+            </h2>
+          </div>
+        </div>
+
+        <div class="card-body p-4 p-md-5">
+
+          @if (errorMessage()) {
+            <div class="alert alert-danger" role="alert">
+              <i class="fa fa-exclamation-triangle me-2"></i>{{ errorMessage() }}
+            </div>
+          }
+
+          <form [formGroup]="form" (ngSubmit)="submit()">
+
+            <!-- Basic Information -->
+            <div class="section-title mb-4">
+              <h5 class="text-primary fw-semibold border-bottom border-primary border-2 pb-2">
+                <i class="fa fa-info-circle me-2"></i>Course Information
+              </h5>
+            </div>
+
+            <div class="row g-3 mb-4">
+              <div class="col-md-4">
+                <label for="code" class="form-label fw-semibold text-dark">Course Code</label>
+                <input
+                  type="text"
+                  class="form-control form-control-lg"
+                  id="code"
+                  formControlName="code"
+                  placeholder="e.g. CS101"
+                  [class.is-invalid]="form.get('code')!.invalid && form.get('code')!.touched"
+                />
+                @if (form.get('code')!.invalid && form.get('code')!.touched) {
+                  <div class="invalid-feedback">Course code is required.</div>
+                }
+              </div>
+
+              <div class="col-md-8">
+                <label for="name" class="form-label fw-semibold text-dark">Course Name</label>
+                <input
+                  type="text"
+                  class="form-control form-control-lg"
+                  id="name"
+                  formControlName="name"
+                  placeholder="e.g. Introduction to Programming"
+                  [class.is-invalid]="form.get('name')!.invalid && form.get('name')!.touched"
+                />
+                @if (form.get('name')!.invalid && form.get('name')!.touched) {
+                  <div class="invalid-feedback">Course name is required.</div>
+                }
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label for="description" class="form-label fw-semibold text-dark">Description</label>
+              <textarea
+                class="form-control form-control-lg"
+                id="description"
+                formControlName="description"
+                rows="4"
+                placeholder="Describe what this course covers..."
+                [class.is-invalid]="form.get('description')!.invalid && form.get('description')!.touched"
+              ></textarea>
+              @if (form.get('description')!.invalid && form.get('description')!.touched) {
+                <div class="invalid-feedback">Description is required.</div>
+              }
+            </div>
+
+            <!-- Academic Details -->
+            <div class="section-title mb-4 mt-5">
+              <h5 class="text-primary fw-semibold border-bottom border-primary border-2 pb-2">
+                <i class="fa fa-university me-2"></i>Academic Details
+              </h5>
+            </div>
+
+            <div class="row g-3 mb-4">
+              <div class="col-md-4">
+                <label for="ects" class="form-label fw-semibold text-dark">ECTS Credits</label>
+                <input
+                  type="number"
+                  class="form-control form-control-lg"
+                  id="ects"
+                  formControlName="ects"
+                  placeholder="e.g. 6"
+                  min="1"
+                  [class.is-invalid]="form.get('ects')!.invalid && form.get('ects')!.touched"
+                />
+                @if (form.get('ects')!.invalid && form.get('ects')!.touched) {
+                  <div class="invalid-feedback">ECTS credits are required (min 1).</div>
+                }
+              </div>
+
+              <div class="col-md-4">
+                <label for="department" class="form-label fw-semibold text-dark">Department</label>
+                <select
+                  class="form-select form-select-lg"
+                  id="department"
+                  formControlName="department"
+                  [class.is-invalid]="form.get('department')!.invalid && form.get('department')!.touched"
+                >
+                  <option value="">Select Department</option>
+                  <option value="Computer Science">Computer Science</option>
+                  <option value="Electrical Engineering">Electrical Engineering</option>
+                  <option value="Telecommunications">Telecommunications</option>
+                  <option value="Mathematics">Mathematics</option>
+                  <option value="Physics">Physics</option>
+                </select>
+                @if (form.get('department')!.invalid && form.get('department')!.touched) {
+                  <div class="invalid-feedback">Department is required.</div>
+                }
+              </div>
+
+              <div class="col-md-4">
+                <label for="level" class="form-label fw-semibold text-dark">Level</label>
+                <select
+                  class="form-select form-select-lg"
+                  id="level"
+                  formControlName="level"
+                  [class.is-invalid]="form.get('level')!.invalid && form.get('level')!.touched"
+                >
+                  <option value="">Select Level</option>
+                  <option value="bachelor">Bachelor</option>
+                  <option value="master">Master</option>
+                  <option value="phd">PhD</option>
+                </select>
+                @if (form.get('level')!.invalid && form.get('level')!.touched) {
+                  <div class="invalid-feedback">Level is required.</div>
+                }
+              </div>
+            </div>
+
+            <div class="row g-3 mb-4">
+              <div class="col-md-4">
+                <label for="status" class="form-label fw-semibold text-dark">Status</label>
+                <select
+                  class="form-select form-select-lg"
+                  id="status"
+                  formControlName="status"
+                  [class.is-invalid]="form.get('status')!.invalid && form.get('status')!.touched"
+                >
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                </select>
+              </div>
+
+              <div class="col-md-4 d-flex align-items-end">
+                <div class="form-check form-switch form-check-lg pb-2">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    role="switch"
+                    id="mandatory"
+                    formControlName="mandatory"
+                  />
+                  <label class="form-check-label fw-semibold" for="mandatory">
+                    Mandatory Course
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-5">
+              <a
+                routerLink="/courses"
+                class="btn btn-outline-secondary btn-lg px-5"
+              >
+                <i class="fa fa-times me-2"></i>Cancel
+              </a>
+              <button
+                type="submit"
+                class="btn btn-primary btn-lg px-5 shadow-sm"
+                [disabled]="form.invalid || isSubmitting()"
+              >
+                @if (isSubmitting()) {
+                  <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                  Saving...
+                } @else {
+                  <i class="fa fa-save me-2"></i>
+                  {{ isEditMode() ? 'Save Changes' : 'Add Course' }}
+                }
+              </button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

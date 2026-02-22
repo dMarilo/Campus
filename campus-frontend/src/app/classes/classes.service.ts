@@ -61,6 +61,16 @@ export interface ClassStudent {
   status: string;
 }
 
+export interface Semester {
+  id: number;
+  name: string;
+}
+
+export interface AcademicYear {
+  id: number;
+  name: string;
+}
+
 interface ClassesResponse {
   data?: CourseClass[];
 }
@@ -75,6 +85,14 @@ interface ProfessorsResponse {
 
 interface StudentsResponse {
   data?: ClassStudent[];
+}
+
+interface SemestersResponse {
+  data?: Semester[];
+}
+
+interface AcademicYearsResponse {
+  data?: AcademicYear[];
 }
 
 @Injectable({
@@ -122,6 +140,33 @@ export class ClassesService {
         map(response => {
           return Array.isArray(response) ? response : (response.data || []);
         })
+      );
+  }
+
+  getSemesters(): Observable<Semester[]> {
+    return this.http.get<SemestersResponse>(`${environment.apiBaseUrl}/semesters`)
+      .pipe(
+        map(response => Array.isArray(response) ? response : (response.data || []))
+      );
+  }
+
+  getAcademicYears(): Observable<AcademicYear[]> {
+    return this.http.get<AcademicYearsResponse>(`${environment.apiBaseUrl}/academic-years`)
+      .pipe(
+        map(response => Array.isArray(response) ? response : (response.data || []))
+      );
+  }
+
+  createClass(data: {
+    course_id: number;
+    semester_id: number;
+    academic_year_id: number;
+    iteration: number;
+    status: string;
+  }): Observable<CourseClass> {
+    return this.http.post<ClassResponse>(`${environment.apiBaseUrl}/classes`, data)
+      .pipe(
+        map(response => (response as any).data || response as CourseClass)
       );
   }
 

@@ -1,0 +1,20 @@
+<div class="users-container">
+  <div class="users-header shadow-sm bg-white p-4 mb-4">
+    <div class="container-fluid">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h1 class="mb-1">
+            <i class="fa fa-users text-primary me-2"></i>Users Management
+          </h1>
+        </div>
+        <button routerLink="/users/add" class="btn btn-primary btn-lg">
+          <i class="fa fa-plus me-2"></i>Add New User
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="users-content container-fluid">
+    <router-outlet></router-outlet>
+  </div>
+</div>

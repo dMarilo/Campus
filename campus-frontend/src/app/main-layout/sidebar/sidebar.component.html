@@ -1,9 +1,9 @@
-<div class="d-flex flex-column flex-shrink-0 p-3 bg-light w-100 h-100">
+<div class="d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary w-100 h-100">
 
   <!-- Logo / Brand -->
   <a
     routerLink="/dashboard"
-    class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none"
+    class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none"
   >
     <i class="fa fa-university fa-2x text-primary me-2"></i>
     <span class="fs-4 fw-bold">Campus</span>
@@ -14,49 +14,49 @@
   <!-- Navigation -->
   <ul class="nav nav-pills flex-column mb-auto">
     <li class="nav-item">
-      <a routerLink="/dashboard" routerLinkActive="active" class="nav-link link-dark">
+      <a routerLink="/dashboard" routerLinkActive="active" class="nav-link link-body-emphasis">
         <i class="fa fa-home me-2"></i>
         Dashboard
       </a>
     </li>
 
     <li class="nav-item">
-      <a routerLink="/library" routerLinkActive="active" class="nav-link link-dark">
+      <a routerLink="/library" routerLinkActive="active" class="nav-link link-body-emphasis">
         <i class="fa fa-book me-2"></i>
         Library
       </a>
     </li>
 
     <li class="nav-item">
-      <a routerLink="/courses" routerLinkActive="active" class="nav-link link-dark">
+      <a routerLink="/courses" routerLinkActive="active" class="nav-link link-body-emphasis">
         <i class="fa fa-graduation-cap me-2"></i>
         Courses
       </a>
     </li>
 
     <li class="nav-item">
-      <a routerLink="/classes" routerLinkActive="active" class="nav-link link-dark">
+      <a routerLink="/classes" routerLinkActive="active" class="nav-link link-body-emphasis">
         <i class="fa fa-chalkboard-teacher me-2"></i>
         Classes
       </a>
     </li>
 
     <li class="nav-item">
-      <a routerLink="/students" routerLinkActive="active" class="nav-link link-dark">
+      <a routerLink="/students" routerLinkActive="active" class="nav-link link-body-emphasis">
         <i class="fa fa-user-graduate me-2"></i>
         Students
       </a>
     </li>
 
     <li class="nav-item">
-      <a routerLink="/professors" routerLinkActive="active" class="nav-link link-dark">
+      <a routerLink="/professors" routerLinkActive="active" class="nav-link link-body-emphasis">
         <i class="fa fa-chalkboard-teacher me-2"></i>
         Professors
       </a>
     </li>
 
     <li class="nav-item">
-      <a routerLink="/exams" routerLinkActive="active" class="nav-link link-dark">
+      <a routerLink="/exams" routerLinkActive="active" class="nav-link link-body-emphasis">
         <i class="fa fa-file-alt me-2"></i>
         Exams
       </a>
@@ -64,9 +64,15 @@
 
     @if (user?.type === 'admin') {
       <li class="nav-item">
-        <a routerLink="/sessions" routerLinkActive="active" class="nav-link link-dark">
+        <a routerLink="/sessions" routerLinkActive="active" class="nav-link link-body-emphasis">
           <i class="fa fa-calendar-check me-2"></i>
           Sessions
+        </a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/users" routerLinkActive="active" class="nav-link link-body-emphasis">
+          <i class="fa fa-users-cog me-2"></i>
+          Users
         </a>
       </li>
     }
@@ -101,9 +107,14 @@
         Profile
       </button>
 
-      <button ngbDropdownItem routerLink="/settings">
-        <i class="fa fa-cog me-2"></i>
-        Settings
+      <button ngbDropdownItem (click)="themeService.toggle(); $event.stopPropagation()" class="d-flex align-items-center justify-content-between">
+        <span>
+          <i class="fa me-2" [class.fa-moon]="!themeService.isDark()" [class.fa-sun]="themeService.isDark()"></i>
+          {{ themeService.isDark() ? 'Light Mode' : 'Dark Mode' }}
+        </span>
+        <div class="theme-switch" [class.active]="themeService.isDark()">
+          <div class="theme-switch-thumb"></div>
+        </div>
       </button>
 
       <div class="dropdown-divider"></div>

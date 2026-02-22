@@ -1,4 +1,4 @@
-import { Component, OnDestroy, signal, computed } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormGroup,
@@ -22,7 +22,7 @@ import { ClassroomSessionService } from '../classroom-session.service';
     FormsModule,
   ],
 })
-export class ClassroomTerminalComponent implements OnDestroy {
+export class ClassroomTerminalComponent implements OnInit, OnDestroy {
 
   classroomId!: number;
 
@@ -30,12 +30,18 @@ export class ClassroomTerminalComponent implements OnDestroy {
   errorMessage = signal<string | null>(null);
   sessionData = signal<any>(null);
 
+  // Student check-in
+  checkInCode = signal('');
+  checkInMessage = signal<{ text: string; type: 'success' | 'error' } | null>(null);
+  checkInLoading = signal(false);
+
   // Clock
   currentTime = signal(new Date());
   elapsedTime = signal('00:00:00');
   private clockInterval: any;
   private elapsedInterval: any;
   private sessionPollInterval: any;
+  private checkInMessageTimeout: any;
 
   // Student roster
   studentSearch = signal('');
@@ -75,16 +81,36 @@ export class ClassroomTerminalComponent implements OnDestroy {
   ) {
     this.classroomId = Number(this.route.snapshot.paramMap.get('id'));
 
-    // Update clock every second
     this.clockInterval = setInterval(() => {
       this.currentTime.set(new Date());
     }, 1000);
+  }
+
+  ngOnInit(): void {
+    // On load/refresh, restore any already-running session without requiring
+    // the professor to re-enter their codes.
+    this.sessionService.getCurrentSession(this.classroomId).subscribe({
+      next: (res: any) => {
+        if (res.data) {
+          this.sessionData.set(res.data);
+          if (res.data.students) {
+            this.students.set(res.data.students);
+          }
+          this.startElapsedTimer();
+          this.startSessionPolling();
+        }
+      },
+      error: () => {
+        // No active session — login form stays, nothing to do
+      },
+    });
   }
 
   ngOnDestroy(): void {
     clearInterval(this.clockInterval);
     clearInterval(this.elapsedInterval);
     clearInterval(this.sessionPollInterval);
+    clearTimeout(this.checkInMessageTimeout);
   }
 
   startSession(): void {
@@ -102,7 +128,6 @@ export class ClassroomTerminalComponent implements OnDestroy {
           this.sessionData.set(res.data);
           this.loading.set(false);
 
-          // Populate students if the API returns them
           if (res.data?.students) {
             this.students.set(res.data.students);
           }
@@ -140,9 +165,43 @@ export class ClassroomTerminalComponent implements OnDestroy {
     });
   }
 
+  checkIn(): void {
+    const code = this.checkInCode().trim();
+    if (!code || this.checkInLoading()) return;
+
+    this.checkInLoading.set(true);
+    this.checkInMessage.set(null);
+
+    this.sessionService.checkInStudent(this.classroomId, code).subscribe({
+      next: (res: any) => {
+        const status = res.status === 'late' ? 'Late' : 'Present';
+        this.checkInMessage.set({ text: `Checked in — ${status}`, type: 'success' });
+        this.checkInCode.set('');
+        this.checkInLoading.set(false);
+        this.scheduleCheckInMessageClear();
+      },
+      error: (err) => {
+        this.checkInMessage.set({
+          text: err?.error?.message ?? 'Check-in failed',
+          type: 'error',
+        });
+        this.checkInLoading.set(false);
+        this.scheduleCheckInMessageClear();
+      },
+    });
+  }
+
+  private scheduleCheckInMessageClear(): void {
+    clearTimeout(this.checkInMessageTimeout);
+    this.checkInMessageTimeout = setTimeout(() => {
+      this.checkInMessage.set(null);
+    }, 3000);
+  }
+
   private startElapsedTimer(): void {
     clearInterval(this.elapsedInterval);
-    const startedAt = new Date(this.sessionData().started_at).getTime();
+    // Backend sends 'starts_at' (not 'started_at')
+    const startedAt = new Date(this.sessionData().starts_at).getTime();
 
     this.elapsedInterval = setInterval(() => {
       const diff = Date.now() - startedAt;
@@ -160,19 +219,31 @@ export class ClassroomTerminalComponent implements OnDestroy {
   private startSessionPolling(): void {
     clearInterval(this.sessionPollInterval);
 
-    // Poll every 3 seconds to update student check-in status
     this.sessionPollInterval = setInterval(() => {
       this.sessionService.getCurrentSession(this.classroomId).subscribe({
         next: (res: any) => {
-          if (res.data && res.data.students) {
-            this.students.set(res.data.students);
+          if (res.data) {
+            if (res.data.students) {
+              this.students.set(res.data.students);
+            }
+          } else {
+            // Session ended externally — return to login form
+            this.resetSessionState();
           }
         },
         error: () => {
-          // Session might have ended, stop polling
-          clearInterval(this.sessionPollInterval);
+          // 404 = no active session — return to login form
+          this.resetSessionState();
         },
       });
     }, 3000);
+  }
+
+  private resetSessionState(): void {
+    this.sessionData.set(null);
+    this.students.set([]);
+    this.elapsedTime.set('00:00:00');
+    clearInterval(this.elapsedInterval);
+    clearInterval(this.sessionPollInterval);
   }
 }

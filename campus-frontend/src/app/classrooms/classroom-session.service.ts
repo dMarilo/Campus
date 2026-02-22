@@ -39,4 +39,11 @@ export class ClassroomSessionService {
     );
   }
 
+  checkInStudent(classroomId: number, studentCode: string): Observable<any> {
+    return this.http.post(
+      `${this.API_URL}/classrooms/${classroomId}/check-in`,
+      { student_code: studentCode }
+    );
+  }
+
 }

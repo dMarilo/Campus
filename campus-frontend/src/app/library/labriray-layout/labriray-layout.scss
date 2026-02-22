@@ -1,6 +1,6 @@
 .library-container {
   min-height: 100vh;
-  background-color: #f8f9fa;
+  background-color: var(--bs-body-bg);
 }
 
 .library-header {
@@ -8,6 +8,6 @@
 
   h1 {
     font-weight: 600;
-    color: #212529;
+    color: var(--bs-body-color);
   }
 }

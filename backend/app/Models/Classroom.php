@@ -161,6 +161,7 @@ class Classroom extends Model
             $session = ClassroomSession::create([
                 'classroom_id'    => $this->id,
                 'course_class_id' => $class->id,
+                'professor_id'    => $professor->id,
                 'starts_at'       => Carbon::now(),
                 'status'          => 'ongoing',
             ]);

@@ -1,0 +1,43 @@
+@if (modal.state().open) {
+  <!-- Backdrop -->
+  <div class="modal-backdrop" (click)="modal.respond(false)"></div>
+
+  <!-- Modal -->
+  <div class="confirm-modal" role="dialog" aria-modal="true">
+    <div class="confirm-modal__content">
+
+      <!-- Icon -->
+      <div class="confirm-modal__icon">
+        <i class="fa fa-trash"></i>
+      </div>
+
+      <!-- Title -->
+      <h4 class="confirm-modal__title">{{ modal.state().title }}</h4>
+
+      <!-- Item name -->
+      <p class="confirm-modal__item">{{ modal.state().itemName }}</p>
+
+      <!-- Message -->
+      <p class="confirm-modal__message">{{ modal.state().message }}</p>
+
+      <!-- Actions -->
+      <div class="confirm-modal__actions">
+        <button
+          type="button"
+          class="btn btn-outline-secondary btn-lg px-4"
+          (click)="modal.respond(false)"
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          class="btn btn-danger btn-lg px-4"
+          (click)="modal.respond(true)"
+        >
+          <i class="fa fa-trash me-2"></i>{{ modal.state().confirmLabel }}
+        </button>
+      </div>
+
+    </div>
+  </div>
+}

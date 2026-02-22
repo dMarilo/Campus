@@ -1,8 +1,10 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CoursesService, CourseBook } from '../courses.service';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { DatePipe, TitleCasePipe } from '@angular/common';
+import { TitleCasePipe } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { AuthService } from '../../auth/auth.service';
+import { ConfirmModalService } from '../../shared/confirm-modal/confirm-modal.service';
 
 @Component({
   selector: 'app-course-preview',
@@ -14,6 +16,8 @@ export class CoursesPreview implements OnInit {
   coursesService = inject(CoursesService);
   activatedRoute = inject(ActivatedRoute);
   router = inject(Router);
+  authService = inject(AuthService);
+  confirmModal = inject(ConfirmModalService);
 
   course = toSignal(
     this.coursesService.getCourse(
@@ -34,6 +38,27 @@ export class CoursesPreview implements OnInit {
 
   ngOnInit() {
     this.loadCourseBooks();
+  }
+
+  async deleteCourse() {
+    const c = this.course();
+    if (!c) return;
+
+    const confirmed = await this.confirmModal.confirm({
+      title: 'Delete Course',
+      itemName: c.name,
+      message: 'This action cannot be undone.',
+    });
+    if (!confirmed) return;
+
+    this.coursesService.deleteCourse(c.id).subscribe({
+      next: () => {
+        this.router.navigate(['/courses']);
+      },
+      error: (err) => {
+        alert(err?.error?.message ?? 'Failed to delete course.');
+      },
+    });
   }
 
   loadCourseBooks() {

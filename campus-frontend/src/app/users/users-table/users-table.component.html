@@ -1,0 +1,137 @@
+<div class="card shadow-sm">
+  <div class="card-body">
+    <!-- Search and Filter Section -->
+    <div class="row mb-4">
+      <div class="col-md-4">
+        <div class="input-group">
+          <span class="input-group-text bg-white">
+            <i class="fa fa-search text-muted"></i>
+          </span>
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Search by email..."
+            [(ngModel)]="searchTerm"
+            [disabled]="isLoading()"
+          />
+        </div>
+      </div>
+      <div class="col-md-3">
+        <select class="form-select" [(ngModel)]="filterType" (change)="applyFilters()">
+          <option value="">All Types</option>
+          <option value="admin">Admin</option>
+          <option value="student">Student</option>
+          <option value="professor">Professor</option>
+        </select>
+      </div>
+      <div class="col-md-5 text-end">
+        @if (!isLoading()) {
+          <span class="badge bg-primary fs-6">
+            {{ filteredUsers().length }} Users
+          </span>
+        }
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    @if (isLoading()) {
+      <div class="text-center py-5">
+        <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <h5 class="text-muted">Loading users...</h5>
+        <p class="text-muted small">Please wait while we fetch user records</p>
+      </div>
+    } @else {
+      <div class="table-responsive">
+        <table class="table table-hover align-middle">
+          <thead class="table-light">
+            <tr>
+              <th scope="col" style="width: 50px">#</th>
+              <th scope="col">Email</th>
+              <th scope="col" class="text-center" style="width: 120px">Type</th>
+              <th scope="col" class="text-center" style="width: 120px">Status</th>
+              <th scope="col" class="text-center" style="width: 130px">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (user of filteredUsers(); track user.id) {
+              <tr>
+                <th scope="row" class="text-muted">{{ user.id }}</th>
+                <td>{{ user.email }}</td>
+                <td class="text-center">
+                  <span
+                    class="badge"
+                    [class.bg-danger]="user.type === 'admin'"
+                    [class.bg-primary]="user.type === 'student'"
+                    [class.bg-info]="user.type === 'professor'">
+                    {{ user.type }}
+                  </span>
+                </td>
+                <td class="text-center">
+                  <span
+                    class="badge"
+                    [class.bg-success]="user.status === 'active'"
+                    [class.bg-secondary]="user.status !== 'active'">
+                    {{ user.status }}
+                  </span>
+                </td>
+                <td>
+                  <div class="d-flex gap-2 justify-content-center">
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-outline-primary"
+                      [routerLink]="['/users/edit', user.id]"
+                      title="Edit User">
+                      <i class="fa fa-edit"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-outline-danger"
+                      (click)="deleteUser(user)"
+                      title="Delete User">
+                      <i class="fa fa-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="5" class="text-center py-5">
+                  <i class="fa fa-users fa-3x text-muted mb-3"></i>
+                  <p class="text-muted mb-0">No users found</p>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+@if (userToDelete) {
+  <div class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5)">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Confirm Delete</h5>
+          <button type="button" class="btn-close" (click)="cancelDelete()"></button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to delete user <strong>{{ userToDelete.email }}</strong>? This action cannot be undone.
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="cancelDelete()">Cancel</button>
+          <button type="button" class="btn btn-danger" (click)="confirmDelete()" [disabled]="isDeleting()">
+            @if (isDeleting()) {
+              <span class="spinner-border spinner-border-sm me-1"></span>
+            }
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+}

@@ -109,4 +109,22 @@ export class CoursesService {
         map(response => response.data || [])
       );
   }
+
+  createCourse(course: Omit<Course, 'id' | 'created_at' | 'updated_at'>): Observable<Course> {
+    return this.http.post<CourseResponse>(`${environment.apiBaseUrl}/courses`, course)
+      .pipe(
+        map(response => (response as any).data || response as Course)
+      );
+  }
+
+  updateCourse(id: number, course: Partial<Omit<Course, 'id' | 'created_at' | 'updated_at'>>): Observable<Course> {
+    return this.http.put<CourseResponse>(`${environment.apiBaseUrl}/courses/${id}`, course)
+      .pipe(
+        map(response => (response as any).data || response as Course)
+      );
+  }
+
+  deleteCourse(id: number): Observable<any> {
+    return this.http.delete(`${environment.apiBaseUrl}/courses/${id}`);
+  }
 }

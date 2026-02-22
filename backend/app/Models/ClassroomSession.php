@@ -16,6 +16,7 @@ class ClassroomSession extends Model
     protected $fillable = [
         'classroom_id',
         'course_class_id',
+        'professor_id',
         'starts_at',
         'ends_at',
         'status',

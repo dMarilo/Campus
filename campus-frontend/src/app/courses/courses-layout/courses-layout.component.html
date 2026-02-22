@@ -6,11 +6,12 @@
           <h1 class="mb-1">
             <i class="fa fa-graduation-cap text-primary me-2"></i>Courses
           </h1>
-          <p class="text-muted mb-0">Academic courses and curriculum</p>
         </div>
-        <button routerLink="/courses/add" class="btn btn-primary btn-lg">
-          <i class="fa fa-plus me-2"></i>Add New Course
-        </button>
+        @if (authService.isAdmin()) {
+          <button routerLink="/courses/add" class="btn btn-primary btn-lg">
+            <i class="fa fa-plus me-2"></i>Add New Course
+          </button>
+        }
       </div>
     </div>
   </div>
